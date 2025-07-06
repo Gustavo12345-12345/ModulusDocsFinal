@@ -1,0 +1,1 @@
+// script JS básico para o ModulusDocs
