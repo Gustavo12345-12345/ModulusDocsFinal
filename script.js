@@ -43,7 +43,9 @@ document.getElementById('btnGerar').addEventListener('click', () => {
 });
 
 // WebSocket para atualização em tempo real
-const socket = new WebSocket('ws://localhost:3000');
+const ws = new WebSocket(`wss://${window.location.host}`);
+
+
 socket.onmessage = event => {
   const msg = JSON.parse(event.data);
   if (msg.action === 'update' || msg.action === 'delete') {
