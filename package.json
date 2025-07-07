@@ -10,3 +10,7 @@
     "pg": "^8.11.1"
   }
 }
+"scripts": {
+  "start": "node server.js",
+  "postinstall": "npm install pg"
+}
