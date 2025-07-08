@@ -13,7 +13,8 @@ document.getElementById('btnGerar').addEventListener('click', () => {
   }
 
   const codigoArquivo = `${codigoProjeto}-${tipoObra}-${tipoProjeto}-${tipoDoc}-${disciplina}-${sequencia}-${revisao}`;
-  const dataAtual     = new Date().toLocaleDateString('pt-BR');
+  const hoje = new Date();
+  const dataAtual = hoje.toISOString().split('T')[0]; // formato YYYY-MM-DD
 
   const registro = {
     Projeto:       codigoProjeto,
@@ -24,8 +25,7 @@ document.getElementById('btnGerar').addEventListener('click', () => {
     Sequencia:     sequencia,
     Revisao:       revisao,
     CodigoArquivo: codigoArquivo,
-    Data:          dataAtual,
-    Autor:         "MODULUS"
+    Data:          dataAtual
   };
 
   fetch('/api/data', {
@@ -42,9 +42,8 @@ document.getElementById('btnGerar').addEventListener('click', () => {
   });
 });
 
-// WebSocket para atualização em tempo real
-const ws = new WebSocket(`wss://${window.location.host}`);
-
+// WebSocket (corrigido)
+const socket = new WebSocket(`wss://${window.location.host}`);
 
 socket.onmessage = event => {
   const msg = JSON.parse(event.data);
@@ -60,6 +59,8 @@ function loadDataFromServer() {
     .then(data => {
       const tbody = document.querySelector('#tabela tbody');
       tbody.innerHTML = '';
+
+      if (!Array.isArray(data)) return;
 
       data.forEach(item => {
         const row = tbody.insertRow();
@@ -100,7 +101,6 @@ document.querySelectorAll('#tabela th').forEach((th, colIndex) => {
     rows.forEach(row => tbody.appendChild(row));
   });
 });
-
 
 function deletarLinha(codigoArquivo) {
   fetch(`/api/data/${codigoArquivo}`, { method: 'DELETE' });
@@ -190,4 +190,3 @@ document.getElementById('btnExportarFiltro').addEventListener('click', () => {
     window.URL.revokeObjectURL(url);
   });
 });
-// script JS básico para o ModulusDocs
