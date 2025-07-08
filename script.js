@@ -1,75 +1,88 @@
+document.addEventListener('DOMContentLoaded', () => {
+  /* ----- Referências ----- */
+  const form        = document.getElementById('registroForm');
+  const tbody       = document.querySelector('#tabelaRegistros tbody');
+  const btnExportar = document.getElementById('exportarCSV');
+  const btnLogout   = document.getElementById('logoutBtn');
 
-document.addEventListener("DOMContentLoaded", () => {
-  const tabela = document.getElementById("tabela-registros");
-  const form = document.getElementById("form-registro");
-  const campos = ["Projeto", "TipoObra", "TipoProjeto", "TipoDoc", "Disciplina", "Sequencia", "Revisao", "CodigoArquivo", "Data"];
-
-  function carregarRegistros() {
-    fetch("/api/registros")
-      .then(res => res.json())
-      .then(data => {
-        tabela.innerHTML = "";
-        data.forEach(reg => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${reg.Projeto}</td>
-            <td>${reg.TipoObra}</td>
-            <td>${reg.TipoProjeto}</td>
-            <td>${reg.TipoDoc}</td>
-            <td>${reg.Disciplina}</td>
-            <td>${reg.Sequencia}</td>
-            <td>${reg.Revisao}</td>
-            <td>${reg.CodigoArquivo}</td>
-            <td>${new Date(reg.Data).toLocaleDateString('pt-BR')}</td>
-            <td>${reg.Autor}</td>
-            <td>
-              <button onclick="editar('${reg.CodigoArquivo}')">Editar</button>
-              <button onclick="remover('${reg.CodigoArquivo}')">Remover</button>
-            </td>
-          `;
-          tabela.appendChild(tr);
-        });
-      });
-  }
-
-  form.addEventListener("submit", e => {
-    e.preventDefault();
-    const data = {};
-    campos.forEach(c => data[c] = form[c].value);
-    fetch("/api/data", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    }).then(res => {
-      if (res.ok) form.reset();
-      carregarRegistros();
-    });
-  });
-
-  window.remover = (codigo) => {
-    fetch("/api/data/" + codigo, { method: "DELETE" })
-      .then(res => {
-        if (res.ok) carregarRegistros();
-      });
-  };
-
-  window.editar = (codigo) => {
-    const linha = [...tabela.querySelectorAll("tr")].find(tr => tr.children[7]?.innerText === codigo);
-    if (!linha) return;
-
-    campos.forEach((c, i) => {
-      form[c].value = linha.children[i]?.innerText || "";
-    });
-  };
-
-  const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+  /* ----- WebSocket seguro ----- */
+  const wsProto = location.protocol === 'https:' ? 'wss' : 'ws';
   let socket;
   try {
-    socket = new WebSocket(`${protocol}://${location.host}`);
-    socket.onmessage = () => carregarRegistros();
-  } catch (e) {
-    console.error("WebSocket error:", e);
+    socket = new WebSocket(`${wsProto}://${location.host}`);
+    socket.onmessage = carregarRegistros;
+  } catch (err) {
+    console.warn('WebSocket indisponível:', err);
   }
 
+  /* ----- Carrega tabela ----- */
+  async function carregarRegistros() {
+    try {
+      const res = await fetch('/api/registros', { credentials:'include' });
+      const dados = await res.json();
+      if (!Array.isArray(dados)) return;
+
+      tbody.innerHTML = '';
+      dados.forEach(r => {
+        const tr = document.createElement('tr');
+
+        [
+          r.Projeto, r.TipoObra, r.TipoProjeto, r.TipoDoc, r.Disciplina,
+          r.Sequencia, r.Revisao, r.CodigoArquivo, r.Data, r.Autor
+        ].forEach(val => {
+          const td = document.createElement('td');
+          td.textContent = val ?? '';
+          tr.appendChild(td);
+        });
+
+        /* Ações */
+        const tdAcoes = document.createElement('td');
+
+        const addBtn = (txt, fn) => {
+          const b = document.createElement('button');
+          b.textContent = txt; b.onclick = fn; tdAcoes.appendChild(b);
+        };
+        addBtn('↑ Seq', () => atualizarCampo(r.CodigoArquivo,'Sequencia',Number(r.Sequencia)+1));
+        addBtn('↑ Rev', () => atualizarCampo(r.CodigoArquivo,'Revisao', Number(r.Revisao) +1));
+        addBtn('🗑',   () => deletarRegistro(r.CodigoArquivo));
+
+        tr.appendChild(tdAcoes);
+        tbody.appendChild(tr);
+      });
+    } catch (e) { console.error(e); }
+  }
+
+  /* ----- Submit do formulário ----- */
+  form?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd   = new FormData(form);
+    const body = Object.fromEntries(fd.entries());
+
+    try {
+      const res = await fetch('/api/data',{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        credentials:'include', body:JSON.stringify(body)
+      });
+      res.ok ? (form.reset(), carregarRegistros()) : alert('Erro ao salvar.');
+    } catch (err) { console.error(err); }
+  });
+
+  /* ----- Funções auxiliares ----- */
+  async function atualizarCampo(codigo,campo,valor){
+    await fetch(`/api/data/${codigo}/campo`,{
+      method:'PUT', headers:{'Content-Type':'application/json'},
+      credentials:'include', body:JSON.stringify({ campo,valor })
+    });
+  }
+
+  async function deletarRegistro(codigo){
+    if (!confirm('Confirma exclusão?')) return;
+    await fetch(`/api/data/${codigo}`, { method:'DELETE', credentials:'include' });
+  }
+
+  btnExportar?.addEventListener('click', () => { location.href='/api/exportar-csv'; });
+  btnLogout?.addEventListener('click',  () => { location.href='/logout'; });
+
+  /* Inicialização */
   carregarRegistros();
 });
