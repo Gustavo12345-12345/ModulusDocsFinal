@@ -71,7 +71,7 @@ app.get('/api/registros', async (req, res) => {
   Sequencia: row.sequencia,
   Revisao: row.revisao,
   CodigoArquivo: row.codigoarquivo,
-  Data: row.data,
+  Data: new Date(row.data).toLocaleDateString('pt-BR'),
   Autor: row.autor
 }));
 res.json(rows);
