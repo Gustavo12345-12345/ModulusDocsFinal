@@ -1,132 +1,75 @@
-const tableBody = document.querySelector("#tabelaRegistros tbody");
-const form = document.getElementById("registroForm");
-const btnExportar = document.getElementById("exportarCSV");
-const btnLogout = document.getElementById("logoutBtn");
 
-let socket;
-try {
-  const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-const socket = new WebSocket(`${protocol}${window.location.host}`);
+document.addEventListener("DOMContentLoaded", () => {
+  const tabela = document.getElementById("tabela-registros");
+  const form = document.getElementById("form-registro");
+  const campos = ["Projeto", "TipoObra", "TipoProjeto", "TipoDoc", "Disciplina", "Sequencia", "Revisao", "CodigoArquivo", "Data"];
 
-  socket.onmessage = () => carregarRegistros();
-} catch (e) {
-  console.error("WebSocket error:", e);
-}
-
-async function carregarRegistros() {
-  try {
-    const res = await fetch("/api/registros", { credentials: "include" });
-    const data = await res.json();
-    if (!Array.isArray(data)) throw new Error("Formato de dados inválido");
-
-    tableBody.innerHTML = "";
-    data.forEach((reg) => {
-      const tr = document.createElement("tr");
-
-      [
-        reg.Projeto, reg.TipoObra, reg.TipoProjeto, reg.TipoDoc,
-        reg.Disciplina, reg.Sequencia, reg.Revisao,
-        reg.CodigoArquivo, reg.Data?.split("T")[0], reg.Autor
-      ].forEach((valor) => {
-        const td = document.createElement("td");
-        td.textContent = valor;
-        tr.appendChild(td);
+  function carregarRegistros() {
+    fetch("/api/registros")
+      .then(res => res.json())
+      .then(data => {
+        tabela.innerHTML = "";
+        data.forEach(reg => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${reg.Projeto}</td>
+            <td>${reg.TipoObra}</td>
+            <td>${reg.TipoProjeto}</td>
+            <td>${reg.TipoDoc}</td>
+            <td>${reg.Disciplina}</td>
+            <td>${reg.Sequencia}</td>
+            <td>${reg.Revisao}</td>
+            <td>${reg.CodigoArquivo}</td>
+            <td>${new Date(reg.Data).toLocaleDateString('pt-BR')}</td>
+            <td>${reg.Autor}</td>
+            <td>
+              <button onclick="editar('${reg.CodigoArquivo}')">Editar</button>
+              <button onclick="remover('${reg.CodigoArquivo}')">Remover</button>
+            </td>
+          `;
+          tabela.appendChild(tr);
+        });
       });
-
-      const tdAcoes = document.createElement("td");
-
-      const btnEditarSeq = document.createElement("button");
-      btnEditarSeq.textContent = "↑ Seq";
-      btnEditarSeq.onclick = () => atualizarCampo(reg.CodigoArquivo, "Sequencia", Number(reg.Sequencia) + 1);
-
-      const btnEditarRev = document.createElement("button");
-      btnEditarRev.textContent = "↑ Rev";
-      btnEditarRev.onclick = () => atualizarCampo(reg.CodigoArquivo, "Revisao", Number(reg.Revisao) + 1);
-
-      const btnExcluir = document.createElement("button");
-      btnExcluir.textContent = "🗑";
-      btnExcluir.onclick = () => deletarRegistro(reg.CodigoArquivo);
-
-      tdAcoes.append(btnEditarSeq, btnEditarRev, btnExcluir);
-      tr.appendChild(tdAcoes);
-
-      tableBody.appendChild(tr);
-    });
-  } catch (err) {
-    console.error("Erro ao carregar registros:", err);
   }
-}
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const dados = {
-    Projeto: form.Projeto.value.trim(),
-    TipoObra: form.TipoObra.value.trim(),
-    TipoProjeto: form.TipoProjeto.value.trim(),
-    TipoDoc: form.TipoDoc.value.trim(),
-    Disciplina: form.Disciplina.value.trim(),
-    Sequencia: form.Sequencia.value.trim(),
-    Revisao: form.Revisao.value.trim(),
-    CodigoArquivo: form.CodigoArquivo.value.trim(),
-    Data: form.Data.value
-  };
-
-  try {
-    const res = await fetch("/api/data", {
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const data = {};
+    campos.forEach(c => data[c] = form[c].value);
+    fetch("/api/data", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(dados)
-    });
-
-    if (res.ok) {
-      form.reset();
+      body: JSON.stringify(data)
+    }).then(res => {
+      if (res.ok) form.reset();
       carregarRegistros();
-    } else {
-      alert("Erro ao salvar registro.");
-    }
-  } catch (err) {
-    console.error("Erro ao enviar dados:", err);
-  }
-});
-
-async function atualizarCampo(codigo, campo, valor) {
-  try {
-    const res = await fetch(`/api/data/${codigo}/campo`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ campo, valor })
     });
+  });
 
-    if (res.ok) carregarRegistros();
-    else alert("Erro ao atualizar.");
-  } catch (err) {
-    console.error(err);
-  }
-}
+  window.remover = (codigo) => {
+    fetch("/api/data/" + codigo, { method: "DELETE" })
+      .then(res => {
+        if (res.ok) carregarRegistros();
+      });
+  };
 
-async function deletarRegistro(codigo) {
-  if (!confirm("Deseja excluir este registro?")) return;
-  try {
-    const res = await fetch(`/api/data/${codigo}`, {
-      method: "DELETE",
-      credentials: "include"
+  window.editar = (codigo) => {
+    const linha = [...tabela.querySelectorAll("tr")].find(tr => tr.children[7]?.innerText === codigo);
+    if (!linha) return;
+
+    campos.forEach((c, i) => {
+      form[c].value = linha.children[i]?.innerText || "";
     });
-    if (res.ok) carregarRegistros();
-    else alert("Erro ao excluir.");
-  } catch (err) {
-    console.error(err);
+  };
+
+  const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+  let socket;
+  try {
+    socket = new WebSocket(`${protocol}://${location.host}`);
+    socket.onmessage = () => carregarRegistros();
+  } catch (e) {
+    console.error("WebSocket error:", e);
   }
-}
 
-btnExportar.addEventListener("click", () => {
-  window.location.href = "/api/exportar-csv";
+  carregarRegistros();
 });
-
-btnLogout.addEventListener("click", () => {
-  window.location.href = "/logout";
-});
-
-carregarRegistros();
