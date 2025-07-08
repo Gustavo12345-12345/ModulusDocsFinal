@@ -2,13 +2,11 @@ const { Pool } = require('pg');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  }
+  ssl: { rejectUnauthorized:false }
 });
 
-// Criação da tabela caso não exista
-const createTableQuery = `
+/* Cria tabela se não existir */
+const createTable = `
   CREATE TABLE IF NOT EXISTS registros (
     id SERIAL PRIMARY KEY,
     Projeto TEXT,
@@ -23,10 +21,8 @@ const createTableQuery = `
     Autor TEXT
   )
 `;
+pool.query(createTable)
+  .then(() => console.log("Tabela 'registros' OK"))
+  .catch(err => console.error("Erro tabela:", err));
 
-pool.query(createTableQuery)
-  .then(() => console.log("Tabela 'registros' verificada/criada"))
-  .catch(err => console.error("Erro ao criar tabela:", err));
-
-// Exportar a pool para o restante da aplicação
 module.exports = pool;
