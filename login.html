@@ -1,40 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <title>Login - Modulus Docs</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Login - ModulusDocs</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    #login-container {
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    input, button {
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
-<img src="moduluslogo.jpg" alt="Logo Modulus" class="logo-superior-central" />
-
-  <div class="login-container">
-    <h2>Login - Modulus Docs</h2>
+  <div id="login-container">
+    <h2>Login</h2>
     <form id="loginForm">
-      <input type="text" id="username" placeholder="Usuário" required />
-      <input type="password" id="password" placeholder="Senha" required />
+      <input type="text" id="usuario" name="usuario" placeholder="Digite seu nome" required />
       <button type="submit">Entrar</button>
     </form>
-    <p id="loginError" style="color:red;"></p>
   </div>
 
   <script>
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    document.getElementById("loginForm").addEventListener("submit", async function (e) {
       e.preventDefault();
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
+      const usuario = document.getElementById("usuario").value;
 
-      const response = await fetch('/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-      });
-      const result = await response.json();
+      try {
+        const res = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // ← IMPORTANTE para enviar o cookie
+          body: JSON.stringify({ user: usuario })
+        });
 
-      if (result.success) {
-        window.location.href = '/';
-      } else {
-        document.getElementById('loginError').textContent = 'Usuário ou senha incorretos.';
+        if (res.ok) {
+          window.location.href = '/'; // redireciona para a página principal
+        } else {
+          alert('Erro ao fazer login.');
+        }
+      } catch (err) {
+        console.error('Erro:', err);
+        alert('Erro de conexão.');
       }
     });
   </script>
