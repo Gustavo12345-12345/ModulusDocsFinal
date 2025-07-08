@@ -1,3 +1,23 @@
+const createTableQuery = `
+  CREATE TABLE IF NOT EXISTS registros (
+    id SERIAL PRIMARY KEY,
+    Projeto TEXT,
+    TipoObra TEXT,
+    TipoProjeto TEXT,
+    TipoDoc TEXT,
+    Disciplina TEXT,
+    Sequencia TEXT,
+    Revisao TEXT,
+    CodigoArquivo TEXT UNIQUE,
+    Data DATE,
+    Autor TEXT
+  )
+`;
+
+pool.query(createTableQuery)
+  .then(() => console.log("Tabela 'registros' verificada/criada"))
+  .catch(err => console.error("Erro ao criar tabela:", err));
+
 const { Pool } = require('pg');
 
 const pool = new Pool({
