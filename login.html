@@ -5,56 +5,122 @@
   <title>Login - ModulusDocs</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      background: #f2f2f7;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       height: 100vh;
     }
-    #login-container {
-      background: white;
+
+    .container {
+      background: #ffffff;
       padding: 40px;
-      border-radius: 8px;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    }
-    input, button {
-      padding: 10px;
-      margin-top: 10px;
+      border-radius: 20px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
       width: 100%;
+      max-width: 360px;
+      text-align: center;
+    }
+
+    .logo {
+      width: 100px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 12px;
+      border: none;
+      background-color: #007aff;
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #005fcc;
+    }
+
+    .error {
+      color: #ff3b30;
+      font-size: 14px;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <div id="login-container">
-    <h2>Login</h2>
+  <div class="container">
+    <img src="moduluslogo.jpg" alt="Logo Modulus" class="logo" />
+    <h2>Entrar no ModulusDocs</h2>
     <form id="loginForm">
-      <input type="text" id="usuario" name="usuario" placeholder="Digite seu nome" required />
+      <input type="text" id="usuario" placeholder="Usuário" required />
+      <input type="password" id="senha" placeholder="Senha" required />
       <button type="submit">Entrar</button>
+      <div id="errorMsg" class="error"></div>
     </form>
   </div>
 
   <script>
+    const usuarios = {
+      modulus0: 'modulus0001',
+      modulus1: 'modulus0002',
+      modulus2: 'modulus0003',
+      modulus3: 'modulus0004',
+      modulus4: 'modulus0005',
+      modulus5: 'modulus0006',
+      modulus6: 'modulus0007',
+      modulus7: 'modulus0008',
+      modulus8: 'modulus0009',
+      modulus9: 'modulus0009'
+    };
+
     document.getElementById("loginForm").addEventListener("submit", async function (e) {
       e.preventDefault();
-      const usuario = document.getElementById("usuario").value;
+      const usuario = document.getElementById("usuario").value.trim();
+      const senha = document.getElementById("senha").value.trim();
+      const errorDiv = document.getElementById("errorMsg");
+
+      if (!usuarios[usuario] || usuarios[usuario] !== senha) {
+        errorDiv.textContent = "Usuário ou senha inválidos.";
+        return;
+      }
 
       try {
         const res = await fetch('/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          credentials: 'include', // ← IMPORTANTE para enviar o cookie
+          credentials: 'include',
           body: JSON.stringify({ user: usuario })
         });
 
         if (res.ok) {
-          window.location.href = '/'; // redireciona para a página principal
+          window.location.href = '/';
         } else {
-          alert('Erro ao fazer login.');
+          errorDiv.textContent = 'Erro ao realizar login.';
         }
       } catch (err) {
-        console.error('Erro:', err);
-        alert('Erro de conexão.');
+        errorDiv.textContent = 'Erro de conexão.';
       }
     });
   </script>
