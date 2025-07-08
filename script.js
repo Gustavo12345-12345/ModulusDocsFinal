@@ -1,192 +1,130 @@
-document.getElementById('btnGerar').addEventListener('click', () => {
-  const tipoProjeto   = document.getElementById('TipoProjeto').value;
-  const tipoObra      = document.getElementById('TipoObra').value;
-  const disciplina     = document.getElementById('Disciplina').value;
-  const tipoDoc       = document.getElementById('TipoDoc').value;
-  const codigoProjeto = document.getElementById('CodigoProjeto').value;
-  const sequencia     = document.getElementById('Sequencia').value;
-  const revisao       = document.getElementById('Revisao').value;
+const tableBody = document.querySelector("#tabelaRegistros tbody");
+const form = document.getElementById("registroForm");
+const btnExportar = document.getElementById("exportarCSV");
+const btnLogout = document.getElementById("logoutBtn");
 
-  if (!tipoProjeto || !tipoObra || !disciplina || !tipoDoc || !codigoProjeto || !sequencia || !revisao) {
-    alert("Por favor, preencha todos os campos.");
-    return;
+let socket;
+try {
+  socket = new WebSocket(`ws://${location.host}`);
+  socket.onmessage = () => carregarRegistros();
+} catch (e) {
+  console.error("WebSocket error:", e);
+}
+
+async function carregarRegistros() {
+  try {
+    const res = await fetch("/api/registros", { credentials: "include" });
+    const data = await res.json();
+    if (!Array.isArray(data)) throw new Error("Formato de dados inválido");
+
+    tableBody.innerHTML = "";
+    data.forEach((reg) => {
+      const tr = document.createElement("tr");
+
+      [
+        reg.Projeto, reg.TipoObra, reg.TipoProjeto, reg.TipoDoc,
+        reg.Disciplina, reg.Sequencia, reg.Revisao,
+        reg.CodigoArquivo, reg.Data?.split("T")[0], reg.Autor
+      ].forEach((valor) => {
+        const td = document.createElement("td");
+        td.textContent = valor;
+        tr.appendChild(td);
+      });
+
+      const tdAcoes = document.createElement("td");
+
+      const btnEditarSeq = document.createElement("button");
+      btnEditarSeq.textContent = "↑ Seq";
+      btnEditarSeq.onclick = () => atualizarCampo(reg.CodigoArquivo, "Sequencia", Number(reg.Sequencia) + 1);
+
+      const btnEditarRev = document.createElement("button");
+      btnEditarRev.textContent = "↑ Rev";
+      btnEditarRev.onclick = () => atualizarCampo(reg.CodigoArquivo, "Revisao", Number(reg.Revisao) + 1);
+
+      const btnExcluir = document.createElement("button");
+      btnExcluir.textContent = "🗑";
+      btnExcluir.onclick = () => deletarRegistro(reg.CodigoArquivo);
+
+      tdAcoes.append(btnEditarSeq, btnEditarRev, btnExcluir);
+      tr.appendChild(tdAcoes);
+
+      tableBody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error("Erro ao carregar registros:", err);
   }
+}
 
-  const codigoArquivo = `${codigoProjeto}-${tipoObra}-${tipoProjeto}-${tipoDoc}-${disciplina}-${sequencia}-${revisao}`;
-  const hoje = new Date();
-  const dataAtual = hoje.toISOString().split('T')[0]; // formato YYYY-MM-DD
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-  const registro = {
-    Projeto:       codigoProjeto,
-    TipoObra:      tipoObra,
-    TipoProjeto:   tipoProjeto,
-    TipoDoc:       tipoDoc,
-    Disciplina:    disciplina,
-    Sequencia:     sequencia,
-    Revisao:       revisao,
-    CodigoArquivo: codigoArquivo,
-    Data:          dataAtual
+  const dados = {
+    Projeto: form.Projeto.value.trim(),
+    TipoObra: form.TipoObra.value.trim(),
+    TipoProjeto: form.TipoProjeto.value.trim(),
+    TipoDoc: form.TipoDoc.value.trim(),
+    Disciplina: form.Disciplina.value.trim(),
+    Sequencia: form.Sequencia.value.trim(),
+    Revisao: form.Revisao.value.trim(),
+    CodigoArquivo: form.CodigoArquivo.value.trim(),
+    Data: form.Data.value
   };
 
-  fetch('/api/data', {
-    method:  'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify(registro)
-  }).then(response => {
-    if (response.ok) {
-      alert("Código gerado com sucesso!");
-      loadDataFromServer();
+  try {
+    const res = await fetch("/api/data", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(dados)
+    });
+
+    if (res.ok) {
+      form.reset();
+      carregarRegistros();
     } else {
-      alert("Erro ao gerar código.");
+      alert("Erro ao salvar registro.");
     }
-  });
-});
-
-// WebSocket (corrigido)
-const socket = new WebSocket(`wss://${window.location.host}`);
-
-socket.onmessage = event => {
-  const msg = JSON.parse(event.data);
-  if (msg.action === 'update' || msg.action === 'delete') {
-    loadDataFromServer();
+  } catch (err) {
+    console.error("Erro ao enviar dados:", err);
   }
-};
+});
 
-// Carregar dados na tabela
-function loadDataFromServer() {
-  fetch('/api/registros')
-    .then(res => res.json())
-    .then(data => {
-      const tbody = document.querySelector('#tabela tbody');
-      tbody.innerHTML = '';
-
-      if (!Array.isArray(data)) return;
-
-      data.forEach(item => {
-        const row = tbody.insertRow();
-        [
-          item.Projeto, item.TipoObra, item.TipoProjeto, item.TipoDoc,
-          item.Disciplina,
-          createEditableCell(item.Sequencia, item.CodigoArquivo, 'Sequencia'),
-          createEditableCell(item.Revisao, item.CodigoArquivo, 'Revisao'),
-          item.CodigoArquivo, item.Data, item.Autor
-        ].forEach(cell => {
-          const td = row.insertCell();
-          if (cell instanceof HTMLElement) {
-            td.appendChild(cell);
-          } else {
-            td.innerText = cell;
-          }
-        });
-
-        const cellAcoes = row.insertCell();
-        cellAcoes.innerHTML = `<button onclick="deletarLinha('${item.CodigoArquivo}')">🗑️</button>`;
-      });
+async function atualizarCampo(codigo, campo, valor) {
+  try {
+    const res = await fetch(`/api/data/${codigo}/campo`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ campo, valor })
     });
+
+    if (res.ok) carregarRegistros();
+    else alert("Erro ao atualizar.");
+  } catch (err) {
+    console.error(err);
+  }
 }
 
-document.querySelectorAll('#tabela th').forEach((th, colIndex) => {
-  th.addEventListener('click', () => {
-    const rows = Array.from(document.querySelectorAll('#tabela tbody tr'));
-    const asc = th.dataset.order !== 'asc';
-    th.dataset.order = asc ? 'asc' : 'desc';
-
-    rows.sort((a, b) => {
-      const cellA = a.cells[colIndex].textContent.trim().toLowerCase();
-      const cellB = b.cells[colIndex].textContent.trim().toLowerCase();
-      return asc ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+async function deletarRegistro(codigo) {
+  if (!confirm("Deseja excluir este registro?")) return;
+  try {
+    const res = await fetch(`/api/data/${codigo}`, {
+      method: "DELETE",
+      credentials: "include"
     });
-
-    const tbody = document.querySelector('#tabela tbody');
-    rows.forEach(row => tbody.appendChild(row));
-  });
-});
-
-function deletarLinha(codigoArquivo) {
-  fetch(`/api/data/${codigoArquivo}`, { method: 'DELETE' });
+    if (res.ok) carregarRegistros();
+    else alert("Erro ao excluir.");
+  } catch (err) {
+    console.error(err);
+  }
 }
 
-window.addEventListener('load', loadDataFromServer);
-
-// Filtros da tabela
-document.querySelectorAll('.filtros input').forEach((input, colIndex) => {
-  input.addEventListener('keyup', () => {
-    const searchValue = input.value.toLowerCase();
-    const rows = document.querySelectorAll('#tabela tbody tr');
-    rows.forEach(row => {
-      const cell = row.cells[colIndex];
-      if (cell && cell.textContent.toLowerCase().includes(searchValue)) {
-        row.style.display = '';
-      } else {
-        row.style.display = 'none';
-      }
-    });
-  });
+btnExportar.addEventListener("click", () => {
+  window.location.href = "/api/exportar-csv";
 });
 
-function createEditableCell(value, codigoArquivo, campo) {
-  const span = document.createElement('span');
-  span.textContent = value;
-  span.contentEditable = true;
-  span.style.cursor = 'text';
-  span.addEventListener('blur', () => {
-    const novoValor = span.textContent.trim();
-
-    fetch(`/api/data/${codigoArquivo}/campo`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ campo, valor: novoValor })
-    }).then(() => {
-      loadDataFromServer();
-    });
-  });
-  return span;
-}
-
-document.getElementById('btnLimparFiltros').addEventListener('click', () => {
-  const filtros = document.querySelectorAll('.filtros input');
-  filtros.forEach(input => input.value = '');
-
-  const linhas = document.querySelectorAll('#tabela tbody tr');
-  linhas.forEach(linha => linha.style.display = '');
-  loadDataFromServer();
+btnLogout.addEventListener("click", () => {
+  window.location.href = "/logout";
 });
 
-document.getElementById('btnExportarFiltro').addEventListener('click', () => {
-  const rows = document.querySelectorAll('#tabela tbody tr');
-  const dadosFiltrados = [];
-
-  rows.forEach(row => {
-    if (row.style.display !== 'none') {
-      const cells = row.querySelectorAll('td');
-      const dado = {
-        Projeto:       cells[0].innerText,
-        TipoObra:      cells[1].innerText,
-        TipoProjeto:   cells[2].innerText,
-        TipoDoc:       cells[3].innerText,
-        Disciplina:    cells[4].innerText,
-        Sequencia:     cells[5].innerText,
-        Revisao:       cells[6].innerText,
-        CodigoArquivo: cells[7].innerText,
-        Data:          cells[8].innerText,
-        Autor:         cells[9].innerText
-      };
-      dadosFiltrados.push(dado);
-    }
-  });
-
-  fetch('/api/exportar-filtro', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(dadosFiltrados)
-  })
-  .then(res => res.blob())
-  .then(blob => {
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'dados-filtrados.xlsx';
-    a.click();
-    window.URL.revokeObjectURL(url);
-  });
-});
+carregarRegistros();
