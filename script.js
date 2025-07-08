@@ -5,7 +5,9 @@ const btnLogout = document.getElementById("logoutBtn");
 
 let socket;
 try {
-  socket = new WebSocket(`ws://${location.host}`);
+  const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+const socket = new WebSocket(`${protocol}${window.location.host}`);
+
   socket.onmessage = () => carregarRegistros();
 } catch (e) {
   console.error("WebSocket error:", e);
