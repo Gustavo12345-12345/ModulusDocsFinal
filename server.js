@@ -66,8 +66,7 @@ app.get('/api/registros', (req, res) => {
 // POST - inserir ou atualizar
 app.post('/api/data', (req, res) => {
   const data = req.body;
-  const autor = d.Autor || 'DESCONHECIDO';
-
+  const autor = d.Autor || req.cookies.authUser || 'DESCONHECIDO';
 
 
   const required = ['Projeto','TipoObra','TipoProjeto','TipoDoc','Disciplina','Sequencia','Revisao','CodigoArquivo','Data'];
