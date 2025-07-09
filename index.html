@@ -353,6 +353,55 @@
 
   <img src="moduluslogo.jpg" alt="Logo Modulus" class="logo-canto-inferior">
 
-  <script src="script.js"></script>
+  <script>
+document.getElementById('btnGerar').addEventListener('click', async () => {
+  const Projeto     = document.getElementById('CodigoProjeto').value;
+  const TipoProjeto = document.getElementById('TipoProjeto').value;
+  const TipoObra    = document.getElementById('TipoObra').value;
+  const Disciplina  = document.getElementById('Disciplina').value;
+  const TipoDoc     = document.getElementById('TipoDoc').value;
+  const Sequencia   = document.getElementById('Sequencia').value.padStart(3,'0');
+  const Revisao     = document.getElementById('Revisao').value || '00';
+
+  // Monta Código
+  const CodigoArquivo = `${Projeto}-${TipoProjeto}-${TipoObra}-${Disciplina}-${TipoDoc}-${Sequencia}-R${Revisao}`;
+
+  // Data atual ISO
+  const hoje = new Date().toISOString().slice(0,10);
+
+  // Envia para a API
+  const body = {
+    Projeto,
+    TipoProjeto,
+    TipoObra,
+    Disciplina,
+    TipoDoc,
+    Sequencia,
+    Revisao,
+    CodigoArquivo,
+    Data: hoje
+  };
+
+  try {
+    const res = await fetch('/api/data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(body)
+    });
+    if (res.ok) {
+      alert('Registro salvo com sucesso!');
+      window.location.reload();
+    } else {
+      alert('Erro ao salvar. Verifique os campos.');
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao enviar dados.');
+  }
+});
+</script>
+<script src="script.js"></script>
+
 </body>
 </html>
