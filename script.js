@@ -1,88 +1,126 @@
-document.addEventListener('DOMContentLoaded', () => {
-  /* ----- Referências ----- */
-  const form        = document.getElementById('registroForm');
-  const tbody       = document.querySelector('#tabelaRegistros tbody');
-  const btnExportar = document.getElementById('exportarCSV');
-  const btnLogout   = document.getElementById('logoutBtn');
+// script.js completamente reescrito para funcionar com Supabase e novo HTML
 
-  /* ----- WebSocket seguro ----- */
-  const wsProto = location.protocol === 'https:' ? 'wss' : 'ws';
-  let socket;
-  try {
-    socket = new WebSocket(`${wsProto}://${location.host}`);
-    socket.onmessage = carregarRegistros;
-  } catch (err) {
-    console.warn('WebSocket indisponível:', err);
-  }
+document.addEventListener("DOMContentLoaded", () => {
+  const SUPABASE_URL = "https://xxxxx.supabase.co"; // Substitua pelo seu
+  const SUPABASE_KEY = "YOUR_PUBLIC_ANON_KEY"; // Substitua pelo seu
+  const TABELA = "documentos";
 
-  /* ----- Carrega tabela ----- */
-  async function carregarRegistros() {
-    try {
-      const res = await fetch('/api/registros', { credentials:'include' });
-      const dados = await res.json();
-      if (!Array.isArray(dados)) return;
+  const headers = {
+    'Content-Type': 'application/json',
+    'apikey': SUPABASE_KEY,
+    'Authorization': `Bearer ${SUPABASE_KEY}`,
+    'Prefer': 'return=representation'
+  };
 
-      tbody.innerHTML = '';
-      dados.forEach(r => {
-        const tr = document.createElement('tr');
+  const elementos = {
+    projeto: document.getElementById("CodigoProjeto"),
+    tipoProjeto: document.getElementById("TipoProjeto"),
+    tipoObra: document.getElementById("TipoObra"),
+    disciplina: document.getElementById("Disciplina"),
+    tipoDoc: document.getElementById("TipoDoc"),
+    sequencia: document.getElementById("Sequencia"),
+    revisao: document.getElementById("Revisao"),
+    codigoArquivo: document.getElementById("CodigoArquivo"),
+    data: document.getElementById("Data"),
+  };
 
-        [
-          r.Projeto, r.TipoObra, r.TipoProjeto, r.TipoDoc, r.Disciplina,
-          r.Sequencia, r.Revisao, r.CodigoArquivo, r.Data, r.Autor
-        ].forEach(val => {
-          const td = document.createElement('td');
-          td.textContent = val ?? '';
-          tr.appendChild(td);
-        });
-
-        /* Ações */
-        const tdAcoes = document.createElement('td');
-
-        const addBtn = (txt, fn) => {
-          const b = document.createElement('button');
-          b.textContent = txt; b.onclick = fn; tdAcoes.appendChild(b);
-        };
-        addBtn('↑ Seq', () => atualizarCampo(r.CodigoArquivo,'Sequencia',Number(r.Sequencia)+1));
-        addBtn('↑ Rev', () => atualizarCampo(r.CodigoArquivo,'Revisao', Number(r.Revisao) +1));
-        addBtn('🗑',   () => deletarRegistro(r.CodigoArquivo));
-
-        tr.appendChild(tdAcoes);
-        tbody.appendChild(tr);
-      });
-    } catch (e) { console.error(e); }
-  }
-
-  /* ----- Submit do formulário ----- */
-  form?.addEventListener('submit', async e => {
-    e.preventDefault();
-    const fd   = new FormData(form);
-    const body = Object.fromEntries(fd.entries());
-
-    try {
-      const res = await fetch('/api/data',{
-        method:'POST', headers:{'Content-Type':'application/json'},
-        credentials:'include', body:JSON.stringify(body)
-      });
-      res.ok ? (form.reset(), carregarRegistros()) : alert('Erro ao salvar.');
-    } catch (err) { console.error(err); }
+  document.getElementById("btnGerar").addEventListener("click", () => {
+    const { projeto, tipoProjeto, tipoObra, disciplina, tipoDoc, sequencia, revisao } = elementos;
+    if (projeto.value && tipoProjeto.value && tipoObra.value && disciplina.value && tipoDoc.value && sequencia.value && revisao.value) {
+      const codigo = `${projeto.value}-${tipoProjeto.value}-${tipoObra.value}-${disciplina.value}-${tipoDoc.value}-${sequencia.value}-${revisao.value}`;
+      elementos.codigoArquivo.value = codigo;
+    } else {
+      alert("Preencha todos os campos para gerar o código.");
+    }
   });
 
-  /* ----- Funções auxiliares ----- */
-  async function atualizarCampo(codigo,campo,valor){
-    await fetch(`/api/data/${codigo}/campo`,{
-      method:'PUT', headers:{'Content-Type':'application/json'},
-      credentials:'include', body:JSON.stringify({ campo,valor })
+  document.getElementById("btnSalvar").addEventListener("click", async () => {
+    const registro = {
+      projeto: elementos.projeto.value,
+      tipo_projeto: elementos.tipoProjeto.value,
+      tipo_obra: elementos.tipoObra.value,
+      disciplina: elementos.disciplina.value,
+      tipo_doc: elementos.tipoDoc.value,
+      sequencia: elementos.sequencia.value,
+      revisao: elementos.revisao.value,
+      codigo_arquivo: elementos.codigoArquivo.value,
+      data: elementos.data.value,
+      autor: "Sistema"
+    };
+
+    if (!registro.codigo_arquivo) {
+      alert("Clique em 'Gerar Código' antes de salvar.");
+      return;
+    }
+
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABELA}`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(registro)
+    });
+
+    if (res.ok) {
+      alert("Registro salvo com sucesso.");
+      carregarTabela();
+    } else {
+      alert("Erro ao salvar registro.");
+    }
+  });
+
+  document.getElementById("btnLimparFiltros").addEventListener("click", () => {
+    document.querySelectorAll(".filtros input").forEach(input => input.value = "");
+    carregarTabela();
+  });
+
+  document.getElementById("btnExportarFiltro").addEventListener("click", () => {
+    const linhas = Array.from(document.querySelectorAll("#tabela tbody tr"));
+    const csv = linhas.map(tr => Array.from(tr.children).slice(0, 10).map(td => td.innerText).join(",")).join("\n");
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "registros.csv";
+    link.click();
+  });
+
+  document.getElementById("logoutBtn")?.addEventListener("click", () => {
+    window.location.href = "/logout";
+  });
+
+  async function carregarTabela() {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABELA}?select=*`, {
+      headers
+    });
+    const dados = await res.json();
+    const tbody = document.querySelector("#tabela tbody");
+    tbody.innerHTML = "";
+    dados.forEach(item => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${item.projeto}</td>
+        <td>${item.tipo_obra}</td>
+        <td>${item.tipo_projeto}</td>
+        <td>${item.tipo_doc}</td>
+        <td>${item.disciplina}</td>
+        <td>${item.sequencia}</td>
+        <td>${item.revisao}</td>
+        <td>${item.codigo_arquivo}</td>
+        <td>${item.data}</td>
+        <td>${item.autor}</td>
+        <td><button onclick="deletarRegistro(${item.id})">🗑</button></td>
+      `;
+      tbody.appendChild(tr);
     });
   }
 
-  async function deletarRegistro(codigo){
-    if (!confirm('Confirma exclusão?')) return;
-    await fetch(`/api/data/${codigo}`, { method:'DELETE', credentials:'include' });
-  }
+  window.deletarRegistro = async (id) => {
+    if (confirm("Deseja excluir este registro?")) {
+      await fetch(`${SUPABASE_URL}/rest/v1/${TABELA}?id=eq.${id}`, {
+        method: "DELETE",
+        headers
+      });
+      carregarTabela();
+    }
+  };
 
-  btnExportar?.addEventListener('click', () => { location.href='/api/exportar-csv'; });
-  btnLogout?.addEventListener('click',  () => { location.href='/logout'; });
-
-  /* Inicialização */
-  carregarRegistros();
+  carregarTabela();
 });
