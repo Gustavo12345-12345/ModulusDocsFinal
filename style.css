@@ -377,6 +377,102 @@ button {
 .btn-secundario:hover {
   background-color: #e5e5ea;
 }
+.logout-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.logout-button {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #c9302c;
+}
+
+.logo-superior-central {
+  display: block;
+  margin: 20px auto;
+  width: 180px;
+}
+
+.titulo-central {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.form-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  max-width: 1200px;
+}
+
+.combo {
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+}
+
+.combo input,
+.combo select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.botao-acao {
+  background-color: #0275d8;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  margin-top: 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.botao-acao:hover {
+  background-color: #025aa5;
+}
+
+.tabela-container {
+  padding: 0 30px 50px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+table th,
+table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+table th {
+  background-color: #f4f4f4;
+}
 
 
 
