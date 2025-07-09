@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     } catch (e) {
       console.error(e);
+      alert('❌ Erro ao carregar registros.');
     }
   }
 
@@ -49,7 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const TipoDoc     = document.getElementById('TipoDoc').value.trim();
     const Sequencia   = document.getElementById('Sequencia').value.trim().padStart(3,'0');
     const Revisao     = (document.getElementById('Revisao').value || '00').trim();
-    const Autor       = document.getElementById('Autor').value.trim();
+    const AutorInput  = document.getElementById('Autor');
+    const Autor       = AutorInput ? AutorInput.value.trim() : '';
 
     // --- Validação obrigatória
     if (!Projeto || !TipoProjeto || !TipoObra || !Disciplina || !TipoDoc || !Sequencia || !Revisao || !Autor) {
@@ -81,15 +83,26 @@ document.addEventListener('DOMContentLoaded', () => {
         credentials: 'include',
         body: JSON.stringify(body)
       });
-      if (res.ok) {
-        alert('✅ Registro salvo com sucesso!');
-        await carregarRegistros();
-      } else {
-        alert('❌ Erro ao salvar. Verifique os campos.');
+
+      if (!res.ok) {
+        // Tenta extrair mensagem de erro do JSON
+        let errorMsg = '❌ Erro ao salvar.';
+        try {
+          const errorData = await res.json();
+          if (errorData && errorData.error) errorMsg = `❌ ${errorData.error}`;
+        } catch {
+          // Nada, fica com erro genérico
+        }
+        alert(errorMsg);
+        return;
       }
+
+      alert('✅ Registro salvo com sucesso!');
+      await carregarRegistros();
+
     } catch (err) {
       console.error(err);
-      alert('❌ Erro ao enviar dados.');
+      alert('❌ Erro ao enviar dados. Verifique sua conexão.');
     }
   });
 
@@ -107,11 +120,16 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('🗑️ Registro excluído com sucesso!');
         await carregarRegistros();
       } else {
-        alert('❌ Erro ao excluir registro.');
+        let errorMsg = '❌ Erro ao excluir registro.';
+        try {
+          const errorData = await res.json();
+          if (errorData && errorData.error) errorMsg = `❌ ${errorData.error}`;
+        } catch {}
+        alert(errorMsg);
       }
     } catch (err) {
       console.error(err);
-      alert('❌ Erro ao excluir registro.');
+      alert('❌ Erro ao excluir registro. Verifique sua conexão.');
     }
   }
 
