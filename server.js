@@ -59,7 +59,20 @@ app.get('/logout', (req, res) => {
 app.get('/api/registros', async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM registros ORDER BY id DESC');
-    res.json(result.rows);
+    const parsed = result.rows.map(r => ({
+  Projeto:       r.projeto,
+  TipoObra:      r.tipoobra,
+  TipoProjeto:   r.tipoprojeto,
+  TipoDoc:       r.tipodoc,
+  Disciplina:    r.disciplina,
+  Sequencia:     r.sequencia,
+  Revisao:       r.revisao,
+  CodigoArquivo: r.codigoarquivo,
+  Data:          r.data ? new Date(r.data).toISOString().split('T')[0] : '',
+  Autor:         r.autor
+}));
+res.json(parsed);
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Erro ao consultar banco.' });
