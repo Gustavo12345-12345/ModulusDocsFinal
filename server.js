@@ -5,7 +5,6 @@ const WebSocket = require('ws');
 const path = require('path');
 const db = require('./db_postgres');
 
-
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
@@ -30,7 +29,9 @@ function broadcast(message) {
   });
 }
 
+// -----------------------------
 // Login
+// -----------------------------
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'login.html'));
 });
@@ -52,7 +53,9 @@ app.get('/logout', (req, res) => {
   res.redirect('/login');
 });
 
+// -----------------------------
 // GET registros
+// -----------------------------
 app.get('/api/registros', async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM registros ORDER BY id DESC');
@@ -63,16 +66,18 @@ app.get('/api/registros', async (req, res) => {
   }
 });
 
-
-
+// -----------------------------
 // POST - inserir ou atualizar
-app.post('/api/data', (req, res) => {
+// -----------------------------
+app.post('/api/data', async (req, res) => {
   const data = req.body;
   const autor = data.Autor || req.cookies.authUser || 'DESCONHECIDO';
 
+  const required = [
+    'Projeto', 'TipoObra', 'TipoProjeto', 'TipoDoc',
+    'Disciplina', 'Sequencia', 'Revisao', 'CodigoArquivo', 'Data', 'Autor'
+  ];
 
-
-  const required = ['Projeto','TipoObra','TipoProjeto','TipoDoc','Disciplina','Sequencia','Revisao','CodigoArquivo','Data'];
   for (let field of required) {
     if (!data[field]) {
       console.error('Campo faltando:', field);
@@ -81,9 +86,20 @@ app.post('/api/data', (req, res) => {
   }
 
   const sql = `
-    INSERT OR REPLACE INTO registros
-    (Projeto, TipoObra, TipoProjeto, TipoDoc, Disciplina, Sequencia, Revisao, CodigoArquivo, Data, Autor)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO registros
+      (Projeto, TipoObra, TipoProjeto, TipoDoc, Disciplina,
+       Sequencia, Revisao, CodigoArquivo, Data, Autor)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+    ON CONFLICT (CodigoArquivo) DO UPDATE SET
+      Projeto     = EXCLUDED.Projeto,
+      TipoObra    = EXCLUDED.TipoObra,
+      TipoProjeto = EXCLUDED.TipoProjeto,
+      TipoDoc     = EXCLUDED.TipoDoc,
+      Disciplina  = EXCLUDED.Disciplina,
+      Sequencia   = EXCLUDED.Sequencia,
+      Revisao     = EXCLUDED.Revisao,
+      Data        = EXCLUDED.Data,
+      Autor       = EXCLUDED.Autor
   `;
   const values = [
     data.Projeto,
@@ -98,32 +114,36 @@ app.post('/api/data', (req, res) => {
     autor
   ];
 
-  db.run(sql, values, function(err) {
-    if (err) {
-      console.error('Erro SQL:', err);
-      return res.status(500).json({ error: 'Erro ao salvar no banco.' });
-    }
+  try {
+    await db.query(sql, values);
     console.log('Registro salvo com sucesso!');
     broadcast({ action: 'update' });
     res.sendStatus(200);
-  });
+  } catch (err) {
+    console.error('Erro SQL:', err);
+    res.status(500).json({ error: 'Erro ao salvar no banco.' });
+  }
 });
 
+// -----------------------------
 // DELETE
-app.delete('/api/data/:codigoArquivo', (req, res) => {
+// -----------------------------
+app.delete('/api/data/:codigoArquivo', async (req, res) => {
   const codigo = req.params.codigoArquivo;
-  db.run('DELETE FROM registros WHERE CodigoArquivo = ?', [codigo], (err) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Erro ao deletar.' });
-    }
+  try {
+    await db.query('DELETE FROM registros WHERE CodigoArquivo = $1', [codigo]);
     broadcast({ action: 'delete' });
     res.sendStatus(200);
-  });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erro ao deletar.' });
+  }
 });
 
+// -----------------------------
 // PUT - atualizar campo específico
-app.put('/api/data/:codigoArquivo/campo', (req, res) => {
+// -----------------------------
+app.put('/api/data/:codigoArquivo/campo', async (req, res) => {
   const { campo, valor } = req.body;
   const codigo = req.params.codigoArquivo;
 
@@ -131,28 +151,35 @@ app.put('/api/data/:codigoArquivo/campo', (req, res) => {
     return res.status(400).json({ error: 'Campo inválido.' });
   }
 
-  const sql = `UPDATE registros SET ${campo} = ? WHERE CodigoArquivo = ?`;
-  db.run(sql, [valor, codigo], (err) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Erro ao atualizar campo.' });
-    }
+  const sql = `UPDATE registros SET ${campo} = $1 WHERE CodigoArquivo = $2`;
+  try {
+    await db.query(sql, [valor, codigo]);
     broadcast({ action: 'update' });
     res.sendStatus(200);
-  });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erro ao atualizar campo.' });
+  }
 });
 
+// -----------------------------
 // Exportar CSV
-app.get('/api/exportar-csv', (req, res) => {
-  db.all('SELECT * FROM registros', (err, rows) => {
-    if (err || !rows.length) {
+// -----------------------------
+app.get('/api/exportar-csv', async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM registros');
+    const rows = result.rows;
+    if (!rows.length) {
       return res.send('Nenhum registro para exportar.');
     }
     const header = Object.keys(rows[0]).join(',');
     const csv = [header, ...rows.map(r => Object.values(r).map(v => `"${v}"`).join(','))].join('\n');
     res.header('Content-Type', 'text/csv');
     res.attachment('dados.csv').send(csv);
-  });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Erro ao exportar CSV.');
+  }
 });
 
 const PORT = process.env.PORT || 3000;
