@@ -53,15 +53,17 @@ app.get('/logout', (req, res) => {
 });
 
 // GET registros
-app.get('/api/registros', (req, res) => {
-  db.all('SELECT * FROM registros ORDER BY id DESC', (err, rows) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Erro ao consultar banco.' });
-    }
-    res.json(rows);
-  });
+app.get('/api/registros', async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM registros ORDER BY id DESC');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erro ao consultar banco.' });
+  }
 });
+
+
 
 // POST - inserir ou atualizar
 app.post('/api/data', (req, res) => {
