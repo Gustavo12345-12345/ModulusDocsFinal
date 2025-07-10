@@ -42,7 +42,8 @@ app.post('/login', (req, res) => {
     try {
       const data = JSON.parse(body);
       res.cookie('authUser', data.user, { httpOnly: false });
-      res.sendStatus(200);
+      res.json({ success: true });
+
     } catch {
       res.sendStatus(400);
     }
