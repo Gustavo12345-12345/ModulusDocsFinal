@@ -81,8 +81,7 @@
     </form>
   </div>
 
-  <script>
-    
+ <script>
   const usuarios = {
     modulus1: 'modulus0001',
     modulus2: 'modulus0003',
@@ -97,10 +96,15 @@
 
   document.getElementById("loginForm").addEventListener("submit", async function (e) {
     e.preventDefault();
-    const usuario = document.getElementById("usuario").value.trim();
+    const usuario = document.getElementById("usuario").value.trim().toLowerCase();
     const senha = document.getElementById("senha").value.trim();
     const errorDiv = document.getElementById("errorMsg");
     errorDiv.textContent = '';
+
+    // Log para debug
+    console.log('Usuário digitado:', usuario);
+    console.log('Senha digitada:', senha);
+    console.log('Senha esperada:', usuarios[usuario]);
 
     if (!usuarios[usuario] || usuarios[usuario] !== senha) {
       errorDiv.textContent = "❌ Usuário ou senha inválidos.";
