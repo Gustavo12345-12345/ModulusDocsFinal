@@ -82,47 +82,53 @@
   </div>
 
   <script>
-    const usuarios = {
-      
-      modulus1: 'modulus0001',
-      modulus2: 'modulus0003',
-      modulus3: 'modulus0004',
-      modulus4: 'modulus0005',
-      modulus5: 'modulus0006',
-      modulus6: 'modulus0007',
-      modulus7: 'modulus0008',
-      modulus8: 'modulus0009',
-      modulus9: 'modulus0009'
-    };
+    
+  const usuarios = {
+    modulus1: 'modulus0001',
+    modulus2: 'modulus0003',
+    modulus3: 'modulus0004',
+    modulus4: 'modulus0005',
+    modulus5: 'modulus0006',
+    modulus6: 'modulus0007',
+    modulus7: 'modulus0008',
+    modulus8: 'modulus0009',
+    modulus9: 'modulus0009'
+  };
 
-    document.getElementById("loginForm").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      const usuario = document.getElementById("usuario").value.trim();
-      const senha = document.getElementById("senha").value.trim();
-      const errorDiv = document.getElementById("errorMsg");
+  document.getElementById("loginForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const usuario = document.getElementById("usuario").value.trim();
+    const senha = document.getElementById("senha").value.trim();
+    const errorDiv = document.getElementById("errorMsg");
+    errorDiv.textContent = '';
 
-      if (!usuarios[usuario] || usuarios[usuario] !== senha) {
-        errorDiv.textContent = "Usuário ou senha inválidos.";
+    if (!usuarios[usuario] || usuarios[usuario] !== senha) {
+      errorDiv.textContent = "❌ Usuário ou senha inválidos.";
+      return;
+    }
+
+    try {
+      const res = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ user: usuario })
+      });
+
+      if (!res.ok) {
+        errorDiv.textContent = '❌ Erro ao realizar login. Tente novamente.';
         return;
       }
 
-      try {
-        const res = await fetch('/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ user: usuario })
-        });
+      // Redireciona para index.html
+      window.location.href = 'index.html';
+    } catch (err) {
+      console.error(err);
+      errorDiv.textContent = '❌ Erro de conexão com o servidor.';
+    }
+  });
+</script>
 
-        if (res.ok) {
-          window.location.href = '/';
-        } else {
-          errorDiv.textContent = 'Erro ao realizar login.';
-        }
-      } catch (err) {
-        errorDiv.textContent = 'Erro de conexão.';
-      }
-    });
-  </script>
+  
 </body>
 </html>
