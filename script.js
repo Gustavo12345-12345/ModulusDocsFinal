@@ -1,50 +1,45 @@
-
-
 document.addEventListener('DOMContentLoaded', () => {
   const tbody = document.getElementById('tabelaRegistros');
-  const filtrosContainer = document.getElementById('filtrosContainer');
 
-  let todosRegistros = []; // Guardar dados originais
+  // 🔵 Guarda todos os dados originais para filtro
+  let todosRegistros = [];
 
+  // 🔵 Campos filtráveis
   const camposFiltraveis = [
     'Projeto', 'TipoObra', 'TipoProjeto', 'TipoDoc',
     'Disciplina', 'Sequencia', 'Revisao', 'CodigoArquivo', 'Data', 'Autor'
   ];
 
-  // Filtros ativos
+  // 🔵 Inputs de filtro já existentes no HTML
+  const mapaFiltros = {
+    'Projeto': document.getElementById('filtroProjeto'),
+    'TipoObra': document.getElementById('filtroTipoObra'),
+    'TipoProjeto': document.getElementById('filtroTipoProjeto'),
+    'TipoDoc': document.getElementById('filtroTipoDoc'),
+    'Disciplina': document.getElementById('filtroDisciplina'),
+    'Sequencia': document.getElementById('filtroSequencia'),
+    'Revisao': document.getElementById('filtroRevisao'),
+    'CodigoArquivo': document.getElementById('filtroCodigoArquivo'),
+    'Data': document.getElementById('filtroData'),
+    'Autor': document.getElementById('filtroAutor')
+  };
+
+  // 🔵 Guarda os valores atuais dos filtros
   const filtrosAtivos = {};
 
-  // ----------------------------
-  // Gerar campos de filtro
-  // ----------------------------
-  function gerarFiltros() {
-    filtrosContainer.innerHTML = '';
-    camposFiltraveis.forEach(campo => {
-      const div = document.createElement('div');
-      div.style.display = 'inline-block';
-      div.style.margin = '4px';
+  // 🔵 Configurar listeners para todos os campos de filtro
+  for (let campo in mapaFiltros) {
+    const input = mapaFiltros[campo];
+    if (!input) continue;
 
-      const label = document.createElement('label');
-      label.textContent = campo;
-      label.style.display = 'block';
-
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.placeholder = `Filtrar ${campo}`;
-      input.dataset.campo = campo;
-      input.addEventListener('input', (e) => {
-        filtrosAtivos[campo] = e.target.value.trim().toLowerCase();
-        renderizarTabela();
-      });
-
-      div.appendChild(label);
-      div.appendChild(input);
-      filtrosContainer.appendChild(div);
+    input.addEventListener('input', () => {
+      filtrosAtivos[campo] = input.value.trim().toLowerCase();
+      renderizarTabela();
     });
   }
 
   // ----------------------------
-  // Aplicar filtros
+  // Função para aplicar os filtros
   // ----------------------------
   function filtrarDados() {
     return todosRegistros.filter(r => {
@@ -61,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------------
-  // Renderizar tabela com filtros
+  // Renderizar tabela com filtros aplicados
   // ----------------------------
   function renderizarTabela() {
     const dadosFiltrados = filtrarDados();
@@ -69,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     dadosFiltrados.forEach(r => {
       const tr = document.createElement('tr');
+
       camposFiltraveis.forEach(campo => {
         const td = document.createElement('td');
         td.textContent = r[campo] ?? '';
@@ -197,6 +193,5 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------------
   // Inicialização
   // ----------------------------
-  gerarFiltros();
   carregarRegistros();
 });
