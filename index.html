@@ -1,205 +1,234 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Modulus Docs – Registro de Documentos</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Codificador Excel</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <a href="/logout" class="logout-link">Sair</a>
   <img src="moduluslogo.jpg" alt="Logo Modulus" class="logo-superior-central">
   <h2>Modulus Docs – Registro de Documentos</h2>
 
-  <div class="linha-form">
-    <div class="combo">
-      <label for="CodigoProjeto">Código do Projeto</label>
-      <select id="CodigoProjeto">
-        <option value="25001">25001 - Duplicação BR-101/SE</option>
-        <option value="25002">25002 - Restauração BA-052</option>
-        <option value="25003">25003 - Ponte sobre o Rio Verde</option>
-        <option value="25004">25004 - Acesso ao Aeroporto</option>
-        <option value="25005">25005 - Travessia Urbana em Itabaiana</option>
-        <option value="25006">25006 - Contorno de Lagarto</option>
-      </select>
-    </div>
-    <div class="combo">
-      <label for="TipoProjeto">Tipo de Projeto</label>
-      <select id="TipoProjeto">
-        <option value="ANT">Anteprojeto</option>
-        <option value="FUN">Funcional</option>
-        <option value="CON">Conceitual</option>
-        <option value="PBA">Básico</option>
-        <option value="EXE">Executivo</option>
-        <option value="ASB">As Built</option>
-        <option value="EVT">Estudos de Viabilidade Técnica, Econômica e Financeira</option>
-        <option value="AMB">Ambiental</option>
-        <option value="SUP">Supervisão de Obras</option>
-        <option value="ATO">Apoio Técnico de Obras</option>
-        <option value="VID">Verificador Independente</option>
-        <option value="OUT">Outros</option>
-      </select>
-    </div>
-    <div class="combo">
-      <label for="TipoObra">Tipo de Obra</label>
-      <select id="TipoObra">
-        <option value="ROD">Rodovia</option>
-        <option value="MIN">Mineração</option>
-        <option value="ACE">Acesso</option>
-        <option value="ALG">Alça de Ligação</option>
-        <option value="ACA">Ampliação de Capacidade</option>
-        <option value="ANE">Anel Viário</option>
-        <option value="BAL">Balança Fixa</option>
-        <option value="BSO">Base Operacional</option>
-        <option value="CCO">Centro de Controle Operacional</option>
-        <option value="CIC">Ciclovia</option>
-        <option value="CNT">Contenção</option>
-        <option value="CTO">Contorno</option>
-        <option value="CTR">Correção de Traçado</option>
-        <option value="DES">Desapropriação</option>
-        <option value="SEG">Dispositivo de Segurança</option>
-        <option value="DDE">Dispositivo em Desnível</option>
-        <option value="DNI">Dispositivo em Nível</option>
-        <option value="DRE">Drenagem</option>
-        <option value="DPL">Duplicação</option>
-        <option value="EDI">Edificação</option>
-        <option value="TAL">Estabilização de Talude</option>
-        <option value="TRA">Estudo de Tráfego</option>
-        <option value="FAD">Faixa Adicional</option>
-        <option value="ILU">Iluminação</option>
-        <option value="INT">Interseção</option>
-        <option value="MOP">Melhorias Operacionais</option>
-        <option value="EME">Obra Emergencial</option>
-        <option value="OAC">Obras de Artes Correntes</option>
-        <option value="OAE">Obras de Artes Especiais</option>
-        <option value="PFA">Passagem de Fauna</option>
-        <option value="PIN">Passagem Inferior</option>
-        <option value="PAS">Passarela</option>
-        <option value="AMB">Passivo Ambiental</option>
-        <option value="PAV">Pavimento</option>
-        <option value="PON">Ponto de Ônibus</option>
-        <option value="PCR">Pontos Críticos</option>
-      </select>
-    </div>
-    <div class="combo">
-      <label for="Disciplina">Disciplina</label>
-      <select id="Disciplina">
-        <option value="GM">Geometria</option>
-        <option value="A0">Correspondência</option>
-        <option value="Y1">Anotação de Responsabilidade Técnica</option>
-        <option value="Z0">Caderno de Respostas</option>
-        <option value="X6">Composições de BDI</option>
-        <option value="X5">Composições de Preço Unitários</option>
-        <option value="X3">Cronograma</option>
-        <option value="A2">Estudo de Traçado</option>
-        <option value="I1">Estudo Pavimentação</option>
-        <option value="N1">Estudos Ambientais</option>
-        <option value="X1">Estudos de Custos e Benefícios</option>
-        <option value="K1">Estudos de Iluminação</option>
-        <option value="E1">Estudos de Tráfego</option>
-        <option value="T1">Estudos de Túnel</option>
-        <option value="D2">Estudos Estabilidade Talude</option>
-        <option value="D1">Estudos Geologia e Geotecnia</option>
-        <option value="H1">Estudos Hidrológicos e Drenagem</option>
-        <option value="A3">Estudos Socioeconômicos</option>
-        <option value="C1">Estudos Topográficos</option>
-        <option value="Q2">Faixa de Domínio</option>
-        <option value="C2">Levantamento Aerofotogramétrico</option>
-        <option value="X4">Memória de Cálculo do Orçamento</option>
-        <option value="L1">Memória de Cálculo e Estudos Estruturais</option>
-        <option value="C3">Nota de Serviço</option>
-        <option value="X2">Orçamento</option>
-        <option value="Z9">Outros</option>
-        <option value="X7">Planilhas de Apoio ao Orçamento</option>
-        <option value="P1">Projeto Arquitetura</option>
-        <option value="O1">Projeto Canteiro de Obras</option>
-        <option value="L4">Projeto Contenção</option>
-      </select>
-    </div>
+  <!-- NOVA ESTRUTURA: agrupamento horizontal dos combos -->
+  <div class="container">
+    <!-- Agrupamento de todos os combos e botões -->
+    <div class="form-group">
+      <div class="combo">
+        <label>Tipo de Projeto</label>
+        <select id="TipoProjeto">
+          <option value="ANT">Anteprojeto</option>
+          <option value="FUN">Funcional</option>
+          <option value="CON">Conceitual</option>
+          <option value="PBA">Básico</option>
+          <option value="EXE">Executivo</option>
+          <option value="ASB">As Built</option>
+          <option value="EVT">Estudos de Viabilidade Técnica, Econômica e Financeira</option>
+          <option value="AMB">Ambiental</option>
+          <option value="SUP">Supervisão de Obras</option>
+          <option value="ATO">Apoio Técnico de Obras</option>
+          <option value="VID">Verificador Independente</option>
+          <option value="OUT">Outros</option>
+        </select>
+      </div>
 
-    <div class="combo">
-      <label for="TipoDoc">Tipo de Documento</label>
-      <select id="TipoDoc">
-        <option value="DE">Desenho</option>
-        <option value="BO">Boletins</option>
-        <option value="CR">Cronograma</option>
-        <option value="EM">Especificação de Materiais</option>
-        <option value="ES">Especificação de Serviço</option>
-        <option value="ET">Especificação Técnica</option>
-        <option value="GR">Guia de Remessa</option>
-        <option value="IA">Imagem Aérea</option>
-        <option value="ID">Índice de Documentos</option>
-        <option value="IP">Instrução de Projeto</option>
-        <option value="IT">Instrução de Trabalho</option>
-        <option value="LM">Lista de Materiais</option>
-        <option value="MC">Memorial de Cálculo</option>
-        <option value="MD">Memorial Descritivo</option>
-        <option value="NS">Nota de Serviço</option>
-        <option value="PL">Planilha de Serviços</option>
-        <option value="PP">Projeto Padrão</option>
-        <option value="RV">Relatório Audiovisual</option>
-        <option value="RA">Relatório de Análise Técnica</option>
-        <option value="RM">Relatório de Monitoração</option>
-        <option value="RC">Relatório de Visita de Campo</option>
-        <option value="RF">Relatório Fotográfico</option>
-        <option value="RT">Relatório Técnico</option>
-      </select>
-    </div>
+      <div class="combo">
+        <label>Tipo de Obra</label>
+        <select id="TipoObra">
+          <option value="ROD">Rodovia</option>
+          <option value="MIN">Mineração</option>
+          <option value="ACE">Acesso</option>
+          <option value="ALG">Alça de Ligação</option>
+          <option value="ACA">Ampliação de Capacidade</option>
+          <option value="ANE">Anel Viário</option>
+          <option value="BAL">Balança Fixa</option>
+          <option value="BSO">Base Operacional</option>
+          <option value="CCO">Centro de Controle Operacional</option>
+          <option value="CIC">Ciclovia</option>
+          <option value="CNT">Contenção</option>
+          <option value="CTO">Contorno</option>
+          <option value="CTR">Corr. Traçado</option>
+          <option value="DES">Desapropriação</option>
+          <option value="SEG">Dispositivo de Segurança</option>
+          <option value="DDE">Dispositivo em Desnível</option>
+          <option value="DNI">Dispositivo em Nível</option>
+          <option value="DRE">Drenagem</option>
+          <option value="DPL">Duplicação</option>
+          <option value="EDI">Edificação</option>
+          <option value="TAL">Estabilização de Talude</option>
+          <option value="TRA">Estudo de Tráfego</option>
+          <option value="FAD">Faixa Adicional</option>
+          <option value="ILU">Iluminação</option>
+          <option value="INT">Interseção</option>
+          <option value="MOP">Melhorias Operacionais</option>
+          <option value="EME">Obra Emergencial</option>
+          <option value="OAC">Obras de Artes Correntes</option>
+          <option value="OAE">Obras de Artes Especiais</option>
+          <option value="PFA">Passagem de Fauna</option>
+          <option value="PIN">Passagem Inferior</option>
+          <option value="PAS">Passarela</option>
+          <option value="AMB">Passivo Ambiental</option>
+          <option value="PAV">Pavimento</option>
+          <option value="PON">Ponto de Ônibus</option>
+          <option value="PCR">Pontos Críticos</option>
+        </select>
+      </div>
 
-    <div class="combo">
-      <label for="Sequencia">Sequência</label>
-      <input type="text" id="Sequencia" placeholder="Ex: 001" pattern="\d{3}" maxlength="3">
-    </div>
+      <div class="combo">
+        <label>Disciplina</label>
+        <select id="Disciplina">
+          <option value="GM">Geometria</option>
+          <option value="A0">Correspondência</option>
+          <option value="Y1">Anotação de Responsabilidade Técnica</option>
+          <option value="Z0">Caderno de Respostas</option>
+          <option value="X6">Composições de BDI</option>
+          <option value="X5">Composições de Preço Unitários</option>
+          <option value="X3">Cronograma</option>
+          <option value="A2">Estudo de Traçado</option>
+          <option value="I1">Estudo Pavimentação</option>
+          <option value="N1">Estudos Ambientais</option>
+          <option value="X1">Estudos de Custos e Benefícios</option>
+          <option value="K1">Estudos de Iluminação</option>
+          <option value="E1">Estudos de Tráfego</option>
+          <option value="T1">Estudos de Túnel</option>
+          <option value="D2">Estudos Estabilidade Talude</option>
+          <option value="D1">Estudos Geologia e Geotecnia</option>
+          <option value="H1">Estudos Hidrológicos e Drenagem</option>
+          <option value="A3">Estudos Socioeconômicos</option>
+          <option value="C1">Estudos Topográficos</option>
+          <option value="Q2">Faixa de Domínio</option>
+          <option value="C2">Levantamento Aerofotogramétrico</option>
+          <option value="X4">Memória de Cálculo do Orçamento</option>
+          <option value="L1">Memória de Cálculo e Estudos Estruturais</option>
+          <option value="C3">Nota de Serviço</option>
+          <option value="X2">Orçamento</option>
+          <option value="Z9">Outros</option>
+          <option value="X7">Planilhas de Apoio ao Orçamento</option>
+          <option value="P1">Projeto Arquitetura</option>
+          <option value="O1">Projeto Canteiro de Obras</option>
+          <option value="L4">Projeto Contenção</option>
+          <option value="B2">Projeto de Cadastro</option>
+          <option value="D3">Projeto de Geotecnia</option>
+          <option value="B1">Projeto de Localização</option>
+          <option value="T2">Projeto de Túnel</option>
+          <option value="Q1">Projeto Desapropriação</option>
+          <option value="O2">Projeto Desvio de Tráfego</option>
+          <option value="H2">Projeto Drenagem</option>
+          <option value="N3">Projeto Estabilização Áreas Degradadas</option>
+          <option value="L3">Projeto Estrutura Metálica</option>
+          <option value="L2">Projeto Estrutural e Concreto e Fundações</option>
+          <option value="F1">Projeto Geométrico</option>
+          <option value="K2">Projeto Iluminação</option>
+          <option value="P8">Projeto Incêndio (Edificações)</option>
+          <option value="M1">Projeto Interferências</option>
+          <option value="J2">Projeto Obras Complementares</option>
+          <option value="N2">Projeto Paisagismo</option>
+          <option value="I2">Projeto Pavimentação</option>
+          <option value="O3">Projeto Sinalização de Obras</option>
+          <option value="J1">Projeto Sinalização e Seg.</option>
+          <option value="G1">Projeto Terraplenagem</option>
+          <option value="D4">Sondagens</option>
+          <option value="A1">Termo de Referência</option>
+          <option value="V1">Volume I</option>
+          <option value="V2">Volume II</option>
+          <option value="V3">Volume III</option>
+          <option value="V4">Volume IV</option>
+          <option value="3A">Volume 3A</option>
+          <option value="3B">Volume 3B</option>
+          <option value="3C">Volume 3C</option>
+          <option value="4U">Volume Único</option>
+        </select>
+      </div>
 
-    <div class="combo">
-      <label for="Revisao">Revisão</label>
-      <input type="text" id="Revisao" placeholder="Ex: 00, A" pattern="[A-Za-z0-9]{1,2}" maxlength="2">
-    </div>
-    <div class="combo">
-      <label for="Autor">Autor</label>
-      <input type="text" id="Autor" placeholder="Seu nome">
-    </div>
+      <div class="combo">
+        <label>Tipo de Documento</label>
+        <select id="TipoDoc">
+          <option value="DE">Desenho</option>
+          <option value="BO">Boletins</option>
+          <option value="CR">Cronograma</option>
+          <option value="EM">Especificação de materiais e equipamentos</option>
+          <option value="ES">Especificação de Serviço</option>
+          <option value="ET">Especificação Técnica</option>
+          <option value="GR">Guia de remessa de documentos</option>
+          <option value="IA">Imagem de levantamento aéreo</option>
+          <option value="ID">Índice de documentos</option>
+          <option value="IP">Instrução de Projeto</option>
+          <option value="IT">Instrução de Trabalho</option>
+          <option value="LM">Lista de Material e Equipamentos</option>
+          <option value="MC">Memorial de Cálculo</option>
+          <option value="MD">Memorial Descritivo</option>
+          <option value="NS">Nota de Serviço</option>
+          <option value="PL">Planilha de serviços, quantidades e preços</option>
+          <option value="PP">Projeto Padrão</option>
+          <option value="RV">Relatório Audiovisual</option>
+          <option value="RA">Relatório de Análise Técnica</option>
+          <option value="RM">Relatório de Monitoração</option>
+          <option value="RC">Relatório de Visita de Campo</option>
+          <option value="RF">Relatório Fotográfico</option>
+          <option value="RT">Relatório Técnico</option>
+        </select>
+      </div>
 
-  <!-- 🔎 Campo de filtro geral + botão CSV -->
-  <div class="barra-filtros-geral">
-    <input id="filtroGeral" type="text" placeholder="🔍 Filtrar em todas as colunas">
-    <button id="btnExportarCSV" class="btn-secundario">⬇️ Baixar CSV</button>
+      <div class="combo">
+        <label>Código do Projeto</label>
+        <select id="CodigoProjeto">
+          <option value="25001">25001 - Duplicação BR-101/SE</option>
+          <option value="25002">25002 - Restauração BA-052</option>
+          <option value="25003">25003 - Ponte sobre o Rio Verde</option>
+          <option value="25004">25004 - Acesso ao Aeroporto</option>
+          <option value="25005">25005 - Travessia Urbana em Itabaiana</option>
+          <option value="25006">25006 - Contorno de Lagarto</option>
+        </select>
+      </div>
+
+      <div class="combo">
+        <label>Sequência</label>
+        <input type="text" id="Sequencia" placeholder="Ex: 001, A01, 105">
+      </div>
+
+      <div class="combo">
+        <label>Revisão</label>
+        <input type="text" id="Revisao" placeholder="Ex: 00, 01, A">
+      </div>
+
+      <div class="combo" style="display:flex; flex-direction:column; justify-content:flex-end;">
+        <button id="btnGerar">Gerar Código</button>
+      </div>
+
+      <div class="combo" style="display:flex; flex-direction:column; justify-content:flex-end;">
+        <button id="btnLimparFiltros">Limpar Filtros</button>
+      </div>
+    </div>
   </div>
-
-  <!-- 📌 Tabela com thead incluindo os filtros por coluna -->
+<div class="filtro-global">
+    <input id="filtroGeral" type="text" placeholder="🔍 Buscar em todas as colunas">
+    <button id="btnExportarCSV">⬇️ Baixar CSV</button>
+  </div>
   <table id="tabela">
     <thead>
       <tr>
-        <th>Projeto</th>
-        <th>TipoObra</th>
-        <th>TipoProjeto</th>
-        <th>TipoDoc</th>
-        <th>Disciplina</th>
-        <th>Sequencia</th>
-        <th>Revisao</th>
-        <th>CodigoArquivo</th>
-        <th>Data</th>
-        <th>Autor</th>
-        <th>Ações</th>
+        <th>Projeto</th><th>TipoObra</th><th>TipoProjeto</th><th>TipoDoc</th>
+        <th>Disciplina</th><th>Sequencia</th><th>Revisao</th><th>CodigoArquivo</th>
+        <th>Data</th><th>Autor</th><th>Ações</th>
       </tr>
       <tr class="filtros">
-        <td><input id="filtroProjeto" type="text"></td>
-        <td><input id="filtroTipoObra" type="text"></td>
-        <td><input id="filtroTipoProjeto" type="text"></td>
-        <td><input id="filtroTipoDoc" type="text"></td>
-        <td><input id="filtroDisciplina" type="text"></td>
-        <td><input id="filtroSequencia" type="text"></td>
-        <td><input id="filtroRevisao" type="text"></td>
-        <td><input id="filtroCodigoArquivo" type="text"></td>
-        <td><input id="filtroData" type="text"></td>
-        <td><input id="filtroAutor" type="text"></td>
-        <td></td>
+        <th><input type="text" placeholder="Buscar"></th>
+        <th><input type="text" placeholder="Buscar"></th>
+        <th><input type="text" placeholder="Buscar"></th>
+        <th><input type="text" placeholder="Buscar"></th>
+        <th><input type="text" placeholder="Buscar"></th>
+        <th><input type="text" placeholder="Buscar"></th>
+        <th><input type="text" placeholder="Buscar"></th>
+        <th><input type="text" placeholder="Buscar"></th>
+        <th><input type="text" placeholder="Buscar"></th>
+        <th><input type="text" placeholder="Buscar"></th>
+        <th></th>
       </tr>
     </thead>
-    <tbody id="tabelaRegistros"></tbody>
+    <tbody></tbody>
   </table>
 
-  <img src="moduluslogo.jpg" alt="Logo Modulus" class="logo-canto-inferior">
   <script src="script.js"></script>
+  <img src="moduluslogo.jpg" alt="Logo Modulus" class="logo-canto-inferior">
 </body>
 </html>
