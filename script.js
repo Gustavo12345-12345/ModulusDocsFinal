@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'Disciplina', 'Sequencia', 'Revisao', 'CodigoArquivo', 'Data', 'Autor'
   ];
 
-  // 🔵 Inputs de filtro já existentes no HTML
+  // 🔵 Inputs de filtro por coluna
   const mapaFiltros = {
     'Projeto': document.getElementById('filtroProjeto'),
     'TipoObra': document.getElementById('filtroTipoObra'),
@@ -27,14 +27,49 @@ document.addEventListener('DOMContentLoaded', () => {
   // 🔵 Guarda os valores atuais dos filtros
   const filtrosAtivos = {};
 
-  // 🔵 Configurar listeners para todos os campos de filtro
+  // 🔵 Configurar listeners para filtros por coluna
   for (let campo in mapaFiltros) {
     const input = mapaFiltros[campo];
     if (!input) continue;
-
     input.addEventListener('input', () => {
       filtrosAtivos[campo] = input.value.trim().toLowerCase();
       renderizarTabela();
+    });
+  }
+
+  // 🔵 Listener para o filtro geral
+  const filtroGeralInput = document.getElementById('filtroGeral');
+  if (filtroGeralInput) {
+    filtroGeralInput.addEventListener('input', () => {
+      filtrosAtivos["__GERAL__"] = filtroGeralInput.value.trim().toLowerCase();
+      renderizarTabela();
+    });
+  }
+
+  // 🔵 Botão para exportar CSV filtrado
+  const btnExportarCSV = document.getElementById('btnExportarCSV');
+  if (btnExportarCSV) {
+    btnExportarCSV.addEventListener('click', () => {
+      const dadosFiltrados = filtrarDados();
+      if (!dadosFiltrados.length) {
+        alert('⚠️ Nenhum dado para exportar.');
+        return;
+      }
+      const header = camposFiltraveis.join(',');
+      const linhas = dadosFiltrados.map(r =>
+        camposFiltraveis.map(campo =>
+          `"${(r[campo] || '').toString().replace(/"/g, '""')}"`
+        ).join(',')
+      );
+      const csv = [header, ...linhas].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'registros_filtrados.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     });
   }
 
@@ -46,9 +81,17 @@ document.addEventListener('DOMContentLoaded', () => {
       for (let campo in filtrosAtivos) {
         const valorFiltro = filtrosAtivos[campo];
         if (!valorFiltro) continue;
-        const valorCampo = (r[campo] || '').toString().toLowerCase();
-        if (!valorCampo.includes(valorFiltro)) {
-          return false;
+
+        if (campo === "__GERAL__") {
+          const matchAlgumCampo = camposFiltraveis.some(col =>
+            (r[col] || '').toString().toLowerCase().includes(valorFiltro)
+          );
+          if (!matchAlgumCampo) return false;
+        } else {
+          const valorCampo = (r[campo] || '').toString().toLowerCase();
+          if (!valorCampo.includes(valorFiltro)) {
+            return false;
+          }
         }
       }
       return true;
@@ -92,7 +135,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await fetch('/api/registros', { credentials: 'include' });
       const dados = await res.json();
       if (!Array.isArray(dados)) return;
-
       todosRegistros = dados;
       renderizarTabela();
     } catch (e) {
@@ -156,7 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       alert('✅ Registro salvo com sucesso!');
       await carregarRegistros();
-
     } catch (err) {
       console.error(err);
       alert('❌ Erro ao enviar dados. Verifique sua conexão.');
