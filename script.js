@@ -1,226 +1,93 @@
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("registroForm");
+  const tabela = document.getElementById("tabelaRegistros").querySelector("tbody");
+  const exportarBtn = document.getElementById("exportarCSV");
+  const logoutBtn = document.getElementById("logoutBtn");
 
-document.addEventListener('DOMContentLoaded', () => {
-  const registroForm = document.getElementById('registroForm');
-  const tabelaRegistros = document.getElementById('tabelaRegistros').getElementsByTagName('tbody')[0];
-  const logoutBtn = document.getElementById('logoutBtn');
-  const exportarCSV = document.getElementById('exportarCSV');
-  const gerarBtn = document.getElementById('btnGerar');
-
-  const carregarRegistros = async () => {
-    const response = await fetch('/registros');
-    const dados = await response.json();
-
-    tabelaRegistros.innerHTML = '';
-
-    dados.forEach(registro => {
-      const row = tabelaRegistros.insertRow();
-
-      row.innerHTML = `
-        <td>${registro.projeto}</td>
-        <td>${registro.tipo_obra}</td>
-        <td>${registro.tipo_projeto}</td>
-        <td>${registro.tipo_doc}</td>
-        <td>${registro.disciplina}</td>
-        <td>${registro.sequencia}</td>
-        <td>${registro.revisao}</td>
-        <td>${registro.codigo_arquivo}</td>
-        <td>${new Date(registro.data).toLocaleDateString()}</td>
-        <td>${registro.autor}</td>
-        <td><button onclick="deletarRegistro(${registro.id})">Excluir</button></td>
-      `;
-    });
-  };
-
-  registroForm.addEventListener('submit', async e => {
-    e.preventDefault();
-
-    const dados = {
-      projeto: registroForm.Projeto.value,
-      tipo_obra: registroForm.TipoObra.value,
-      tipo_projeto: registroForm.TipoProjeto.value,
-      tipo_doc: registroForm.TipoDoc.value,
-      disciplina: registroForm.Disciplina.value,
-      sequencia: registroForm.Sequencia.value,
-      revisao: registroForm.Revisao.value,
-      codigo_arquivo: registroForm.CodigoArquivo.value,
-      data: registroForm.Data.value,
-    };
-
-    await fetch('/registro', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(dados),
-    });
-
-    registroForm.reset();
-    carregarRegistros();
-  });
-
-  logoutBtn.addEventListener('click', async () => {
-    await fetch('/logout');
-    window.location.href = '/login';
-  });
-
-  exportarCSV.addEventListener('click', () => {
-    const csv = [];
-    const linhas = document.querySelectorAll('table tr');
-    linhas.forEach(linha => {
-      const row = [];
-      linha.querySelectorAll('th, td').forEach(celula => {
-        row.push(celula.innerText);
-      });
-      csv.push(row.join(','));
-    });
-
-    const blob = new Blob([csv.join('\n')], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'registros.csv';
-    a.click();
-    window.URL.revokeObjectURL(url);
-  });
-
-  gerarBtn.addEventListener('click', () => {
-    const projeto = registroForm.Projeto.value;
-    const tipoObra = registroForm.TipoObra.value;
-    const tipoProjeto = registroForm.TipoProjeto.value;
-    const tipoDoc = registroForm.TipoDoc.value;
-    const disciplina = registroForm.Disciplina.value;
-    const sequencia = registroForm.Sequencia.value.padStart(3, '0');
-    const revisao = registroForm.Revisao.value.toUpperCase();
-
-    const codigo = `${projeto}-${tipoObra}-${tipoProjeto}-${tipoDoc}-${disciplina}-${sequencia}-${revisao}`;
-    registroForm.CodigoArquivo.value = codigo;
-  });
-
-  carregarRegistros();
-});
-
-async function deletarRegistro(id) {
-  await fetch(`/registro/${id}`, { method: 'DELETE' });
-  location.reload();
-}
-document.addEventListener('DOMContentLoaded', () => {
-  const filtroGeralInput = document.getElementById('filtroGeral');
-  const btnExportarCSV = document.getElementById('btnExportarCSV');
-  const btnGerar = document.getElementById('btnGerar');
-  const tbody = document.querySelector('tbody');
-  let todosRegistros = [];
-
+  // Função para carregar os registros do banco
   async function carregarRegistros() {
-    const res = await fetch('/api/registros');
-    todosRegistros = await res.json();
-    renderTabela(todosRegistros);
+    const response = await fetch("/registros");
+    const registros = await response.json();
+    tabela.innerHTML = "";
+    registros.forEach(reg => adicionarLinhaNaTabela(reg));
   }
 
-  function renderTabela(data) {
-    tbody.innerHTML = '';
-    data.forEach(item => {
-      const tr = document.createElement('tr');
-      Object.values(item).forEach(v => {
-        const td = document.createElement('td');
-        td.textContent = v;
-        tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
+  // Função para adicionar uma linha na tabela
+  function adicionarLinhaNaTabela(reg) {
+    const linha = document.createElement("tr");
+    linha.innerHTML = `
+      <td>${reg.Projeto}</td>
+      <td>${reg.TipoObra}</td>
+      <td>${reg.TipoProjeto}</td>
+      <td>${reg.TipoDoc}</td>
+      <td>${reg.Disciplina}</td>
+      <td>${reg.Sequencia}</td>
+      <td>${reg.Revisao}</td>
+      <td>${reg.CodigoArquivo}</td>
+      <td>${new Date(reg.Data).toLocaleDateString()}</td>
+      <td>${reg.Autor}</td>
+      <td><button class="btn-excluir" data-id="${reg.id}">Excluir</button></td>
+    `;
+    tabela.appendChild(linha);
+  }
+
+  // Envio do formulário
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const dados = Object.fromEntries(new FormData(form).entries());
+
+    const response = await fetch("/registro", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(dados)
     });
-  }
 
-  function filtrarGlobal() {
-    const termo = filtroGeralInput.value.trim().toLowerCase();
-    const filtrados = todosRegistros.filter(row =>
-      Object.values(row).some(
-        val => val && val.toString().toLowerCase().includes(termo)
-      )
-    );
-    renderTabela(filtrados);
-  }
-
-  filtroGeralInput.addEventListener('input', filtrarGlobal);
-
-  btnExportarCSV.addEventListener('click', () => {
-    const termo = filtroGeralInput.value.trim().toLowerCase();
-    const filtrados = todosRegistros.filter(row =>
-      Object.values(row).some(
-        val => val && val.toString().toLowerCase().includes(termo)
-      )
-    );
-
-    if (!filtrados.length) {
-      alert('Nenhum dado para exportar.');
-      return;
+    if (response.ok) {
+      const novoRegistro = await response.json();
+      adicionarLinhaNaTabela(novoRegistro);
+      form.reset();
+    } else {
+      alert("Erro ao salvar o registro.");
     }
-
-    const csv = [Object.keys(filtrados[0]).join(',')]
-      .concat(filtrados.map(r => Object.values(r).join(',')))
-      .join('\n');
-
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.setAttribute('href', url);
-    a.setAttribute('download', 'registros_filtrados.csv');
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
   });
 
-  btnGerar.addEventListener('click', function () {
-    const projeto = document.getElementById('CodigoProjeto').value;
-    const tipoProjeto = document.getElementById('TipoProjeto').value;
-    const tipoObra = document.getElementById('TipoObra').value;
-    const disciplina = document.getElementById('Disciplina').value;
-    const tipoDoc = document.getElementById('TipoDoc').value;
-    const sequencia = document.getElementById('Sequencia').value.padStart(3, '0');
-    const revisao = document.getElementById('Revisao').value.toUpperCase().padStart(2, '0');
-
-    if (!projeto || !tipoProjeto || !tipoObra || !disciplina || !tipoDoc || !sequencia || !revisao) {
-      alert("Preencha todos os campos obrigatórios para gerar o código.");
-      return;
-    }
-
-    const codigo = `${projeto}-${tipoProjeto}-${tipoObra}-${disciplina}-${tipoDoc}-${sequencia}-${revisao}`;
-    const inputCodigo = document.getElementById('CodigoArquivo');
-    if (inputCodigo) inputCodigo.value = codigo;
-  });
-
-  // Filtros por coluna
-  document.querySelectorAll(".filtros input").forEach((input, index) => {
-    input.addEventListener("input", () => {
-      const filtro = input.value.toLowerCase();
-      const linhas = document.querySelectorAll("#tabela tbody tr");
-      linhas.forEach((linha) => {
-        const celula = linha.cells[index];
-        const conteudo = celula ? celula.textContent.toLowerCase() : "";
-        const visivel = conteudo.includes(filtro);
-        linha.style.display = visivel ? "" : "none";
+  // Excluir registro
+  tabela.addEventListener("click", async function (e) {
+    if (e.target.classList.contains("btn-excluir")) {
+      const id = e.target.dataset.id;
+      const response = await fetch(`/registro/${id}`, {
+        method: "DELETE"
       });
-    });
+      if (response.ok) {
+        e.target.closest("tr").remove();
+      }
+    }
   });
 
-  // Exportar visíveis para XLSX
-  document.getElementById("btnExportarFiltro").addEventListener("click", function () {
-    const XLSX = window.XLSX;
-    const tabela = document.getElementById("tabela");
-    const linhasVisiveis = Array.from(tabela.querySelectorAll("tbody tr")).filter(
-      (linha) => linha.style.display !== "none"
-    );
-
-    const dados = [];
-    const cabecalho = Array.from(tabela.querySelectorAll("thead tr")[0].cells).map((th) => th.textContent.trim());
-    dados.push(cabecalho.slice(0, -1)); // Remove "Ações"
-
-    linhasVisiveis.forEach((linha) => {
-      const linhaDados = Array.from(linha.cells).map((td) => td.textContent.trim());
-      dados.push(linhaDados.slice(0, -1)); // Remove "Ações"
+  // Exportar CSV
+  exportarBtn.addEventListener("click", function () {
+    const linhas = Array.from(tabela.querySelectorAll("tr"));
+    let csv = "Projeto,TipoObra,TipoProjeto,TipoDoc,Disciplina,Sequencia,Revisao,CodigoArquivo,Data,Autor\n";
+    linhas.forEach(linha => {
+      const colunas = linha.querySelectorAll("td");
+      if (colunas.length > 0) {
+        const dados = Array.from(colunas).slice(0, 10).map(td => `"${td.innerText}"`).join(",");
+        csv += dados + "\n";
+      }
     });
 
-    const ws = XLSX.utils.aoa_to_sheet(dados);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Filtrados");
-    XLSX.writeFile(wb, "download.xlsx");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "registros.csv";
+    link.click();
   });
 
+  // Logout
+  logoutBtn.addEventListener("click", function () {
+    window.location.href = "/logout";
+  });
+
+  // Carregar dados ao iniciar
   carregarRegistros();
 });
