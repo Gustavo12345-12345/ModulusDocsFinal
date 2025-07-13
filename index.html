@@ -15,16 +15,17 @@
 
    
     #btnExportarCSV {
-      background-color: #1a73e8; /* Cor azul */
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 15px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 15px; /* Aumentamos o arredondamento */
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 10px;
+}
 
     #btnExportarCSV:hover {
       background-color: #155ab6; /* Azul mais escuro ao passar o mouse */
@@ -32,16 +33,23 @@
 
     
     #btnGerar {
-      display: block; /* Permite o uso de margem auto para centralizar */
-      width: auto; /* Largura se ajusta ao texto */
-      min-width: 180px; /* Largura mínima para boa aparência */
-      padding: 12px 20px;
-      font-size: 16px;
-      font-weight: bold;
-      margin-top: 10px;
-      margin-left: auto; /* Mágica da centralização */
-      margin-right: auto; /* Mágica da centralização */
-    }
+  display: block;
+  width: auto;
+  min-width: 180px;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #007aff;
+  color: white;
+  border: none;
+  border-radius: 15px; /* Aumentamos o arredondamento */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+    
   </style>
 </head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
