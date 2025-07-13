@@ -5,6 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Codificador Excel</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+   
+    .filtro-global {
+      text-align: center;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+   
+    #btnExportarCSV {
+      background-color: #1a73e8; /* Cor azul */
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #btnExportarCSV:hover {
+      background-color: #155ab6; /* Azul mais escuro ao passar o mouse */
+    }
+
+    
+    #btnGerar {
+      display: block; /* Permite o uso de margem auto para centralizar */
+      width: auto; /* Largura se ajusta ao texto */
+      min-width: 180px; /* Largura mínima para boa aparência */
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 10px;
+      margin-left: auto; /* Mágica da centralização */
+      margin-right: auto; /* Mágica da centralização */
+    }
+  </style>
 </head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -197,14 +235,12 @@
         <button id="btnGerar">Gerar Código</button>
       </div>
 
-      <div class="combo" style="display:flex; flex-direction:column; justify-content:flex-end;">
-        <button id="btnLimparFiltros">Limpar Filtros</button>
-      </div>
+      
     </div>
   </div>
 <div class="filtro-global">
-    <input id="filtroGeral" type="text" placeholder="🔍 Buscar em todas as colunas">
-    <button id="btnExportarCSV">⬇️ Baixar CSV</button>
+    
+    <button id="btnExportarCSV">Baixar CSV</button>
   </div>
   <table id="tabela">
     <thead>
