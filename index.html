@@ -7,7 +7,16 @@
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-<style>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Codificador Excel</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <style>
     /* Novo container para alinhar os botões na mesma linha */
     .botoes-acao-container {
       display: flex;
@@ -19,11 +28,11 @@
 
     /* Estilo BASE para AMBOS os botões (garante o mesmo tamanho e formato) */
     #btnGerar, #btnExportarCSV {
-      width: 220px; /* Largura fixa para garantir o mesmo tamanho */
+      width: 200px; /* Tamanho final, um pouco menor */
       padding: 12px 20px;
-      font-size: 16px;
+      font-size: 12px;        /* Antes: 16px */
       font-weight: bold;
-      border-radius: 8px; /* Mantém o arredondamento original */
+      border-radius: 8px;
       border: 2px solid #007aff; /* Borda padrão azul */
       cursor: pointer;
       transition: all 0.3s ease; /* Transição suave para todas as propriedades */
@@ -62,9 +71,10 @@
     <!-- Agrupamento de todos os combos e botões -->
     <div class="form-group" autocomplete="off">
       <div class="combo">
-        <option value="" disabled selected>Selecione uma opção...</option>
+        
         <label>Código do Projeto</label>
         <select id="CodigoProjeto">
+          <option value="" disabled selected>Selecione uma opção...</option>
           <option value="25001">25001 - Duplicação BR-101/SE</option>
           <option value="25002">25002 - Restauração BA-052</option>
           <option value="25003">25003 - Ponte sobre o Rio Verde</option>
@@ -75,8 +85,9 @@
       </div>
       <div class="combo">
         <label>Tipo de Obra</label>
-        <option value="" disabled selected>Selecione uma opção...</option>
+        
         <select id="TipoObra">
+          <option value="" disabled selected>Selecione uma opção...</option>
           <option value="ROD">Rodovia</option>
           <option value="MIN">Mineração</option>
           <option value="ACE">Acesso</option>
@@ -117,8 +128,9 @@
       </div>
       <div class="combo">
         <label>Tipo de Projeto</label>
-        <option value="" disabled selected>Selecione uma opção...</option>
+        
         <select id="TipoProjeto">
+          <option value="" disabled selected>Selecione uma opção...</option>
           <option value="ANT">Anteprojeto</option>
           <option value="FUN">Funcional</option>
           <option value="CON">Conceitual</option>
@@ -136,8 +148,9 @@
 
       <div class="combo">
         <label>Tipo de Documento</label>
-        <option value="" disabled selected>Selecione uma opção...</option>
+        
         <select id="TipoDoc">
+          <option value="" disabled selected>Selecione uma opção...</option>
           <option value="DE">Desenho</option>
           <option value="BO">Boletins</option>
           <option value="CR">Cronograma</option>
@@ -166,9 +179,9 @@
 
       <div class="combo">
         <label>Disciplina</label>
-        <option value="" disabled selected>Selecione uma opção...</option>
-        <select id="Disciplina">
         
+        <select id="Disciplina">
+          <option value="" disabled selected>Selecione uma opção...</option>
           <option value="GM">Geometria</option>
           <option value="A0">Correspondência</option>
           <option value="Y1">Anotação de Responsabilidade Técnica</option>
