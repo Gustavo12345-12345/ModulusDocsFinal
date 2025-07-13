@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   const filtroGeralInput = document.getElementById('filtroGeral');
   const btnExportarCSV = document.getElementById('btnExportarCSV');
+  const btnGerar = document.getElementById('btnGerar');
   const tbody = document.querySelector('tbody');
-
   let todosRegistros = [];
 
   async function carregarRegistros() {
@@ -63,63 +63,61 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.removeChild(a);
   });
 
-  carregarRegistros();
-});
-// Sistema de filtros por coluna (executado em cada input)
-document.querySelectorAll(".filtros input").forEach((input, index) => {
-  input.addEventListener("input", () => {
-    const filtro = input.value.toLowerCase();
-    const linhas = document.querySelectorAll("#tabela tbody tr");
+  btnGerar.addEventListener('click', function () {
+    const projeto = document.getElementById('CodigoProjeto').value;
+    const tipoProjeto = document.getElementById('TipoProjeto').value;
+    const tipoObra = document.getElementById('TipoObra').value;
+    const disciplina = document.getElementById('Disciplina').value;
+    const tipoDoc = document.getElementById('TipoDoc').value;
+    const sequencia = document.getElementById('Sequencia').value.padStart(3, '0');
+    const revisao = document.getElementById('Revisao').value.toUpperCase().padStart(2, '0');
 
-    linhas.forEach((linha) => {
-      const celula = linha.cells[index];
-      const conteudo = celula ? celula.textContent.toLowerCase() : "";
-      const visivel = conteudo.includes(filtro);
+    if (!projeto || !tipoProjeto || !tipoObra || !disciplina || !tipoDoc || !sequencia || !revisao) {
+      alert("Preencha todos os campos obrigatórios para gerar o código.");
+      return;
+    }
 
-      linha.style.display = visivel ? "" : "none";
+    const codigo = `${projeto}-${tipoProjeto}-${tipoObra}-${disciplina}-${tipoDoc}-${sequencia}-${revisao}`;
+    const inputCodigo = document.getElementById('CodigoArquivo');
+    if (inputCodigo) inputCodigo.value = codigo;
+  });
+
+  // Filtros por coluna
+  document.querySelectorAll(".filtros input").forEach((input, index) => {
+    input.addEventListener("input", () => {
+      const filtro = input.value.toLowerCase();
+      const linhas = document.querySelectorAll("#tabela tbody tr");
+      linhas.forEach((linha) => {
+        const celula = linha.cells[index];
+        const conteudo = celula ? celula.textContent.toLowerCase() : "";
+        const visivel = conteudo.includes(filtro);
+        linha.style.display = visivel ? "" : "none";
+      });
     });
   });
-});
 
-// Função para exportar os dados filtrados da tabela para .xlsx
-document.getElementById("btnExportarFiltro").addEventListener("click", function () {
-  const XLSX = window.XLSX; // Requer XLSX (SheetJS) incluído no HTML
-  const tabela = document.getElementById("tabela");
-  const linhasVisiveis = Array.from(tabela.querySelectorAll("tbody tr")).filter(
-    (linha) => linha.style.display !== "none"
-  );
+  // Exportar visíveis para XLSX
+  document.getElementById("btnExportarFiltro").addEventListener("click", function () {
+    const XLSX = window.XLSX;
+    const tabela = document.getElementById("tabela");
+    const linhasVisiveis = Array.from(tabela.querySelectorAll("tbody tr")).filter(
+      (linha) => linha.style.display !== "none"
+    );
 
-  const dados = [];
-  const cabecalho = Array.from(tabela.querySelectorAll("thead tr")[0].cells).map((th) => th.textContent.trim());
-  dados.push(cabecalho.slice(0, -1)); // Remove "Ações"
+    const dados = [];
+    const cabecalho = Array.from(tabela.querySelectorAll("thead tr")[0].cells).map((th) => th.textContent.trim());
+    dados.push(cabecalho.slice(0, -1)); // Remove "Ações"
 
-  linhasVisiveis.forEach((linha) => {
-    const linhaDados = Array.from(linha.cells).map((td) => td.textContent.trim());
-    dados.push(linhaDados.slice(0, -1)); // Remove "Ações"
+    linhasVisiveis.forEach((linha) => {
+      const linhaDados = Array.from(linha.cells).map((td) => td.textContent.trim());
+      dados.push(linhaDados.slice(0, -1)); // Remove "Ações"
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(dados);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Filtrados");
+    XLSX.writeFile(wb, "download.xlsx");
   });
 
-  const ws = XLSX.utils.aoa_to_sheet(dados);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Filtrados");
-  XLSX.writeFile(wb, "download.xlsx");
-  document.getElementById('btnGerar').addEventListener('click', function () {
-  const projeto = document.getElementById('CodigoProjeto').value;
-  const tipoProjeto = document.getElementById('TipoProjeto').value;
-  const tipoObra = document.getElementById('TipoObra').value;
-  const disciplina = document.getElementById('Disciplina').value;
-  const tipoDoc = document.getElementById('TipoDoc').value;
-  const sequencia = document.getElementById('Sequencia').value.padStart(3, '0');
-  const revisao = document.getElementById('Revisao').value.toUpperCase().padStart(2, '0');
-
-  // validação básica
-  if (!projeto || !tipoProjeto || !tipoObra || !disciplina || !tipoDoc || !sequencia || !revisao) {
-    alert("Preencha todos os campos obrigatórios para gerar o código.");
-    return;
-  }
-
-  const codigo = `${projeto}-${tipoProjeto}-${tipoObra}-${disciplina}-${tipoDoc}-${sequencia}-${revisao}`;
-  document.getElementById('CodigoArquivo').value = codigo;
+  carregarRegistros();
 });
-
-});
-
