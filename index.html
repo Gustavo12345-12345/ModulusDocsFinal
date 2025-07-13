@@ -8,35 +8,25 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
-    /* * Container dos botões de ação.
-     * A adição de 'width: 100%;' é a correção CRÍTICA para a centralização.
-     * Ela força o container a ocupar toda a largura, permitindo que o 
-     * 'justify-content: center;' funcione corretamente.
-    */
+    /* Novo container para alinhar os botões na mesma linha */
     .botoes-acao-container {
       display: flex;
-      width: 100%; /* CORREÇÃO PARA CENTRALIZAÇÃO */
-      justify-content: center; 
+      justify-content: center; /* Centraliza os botões na página */
       align-items: center;
-      gap: 20px;
-      margin: 25px 0;
+      gap: 20px; /* Espaço entre os botões */
+      margin: 25px 0; /* Espaço vertical acima e abaixo dos botões */
     }
 
-    /* * Estilo BASE para AMBOS os botões com redução de 25% em todas as dimensões.
-     * Os valores anteriores foram recalculados.
-    */
+    /* Estilo BASE para AMBOS os botões (garante o mesmo tamanho e formato) */
     #btnGerar, #btnExportarCSV {
-      /* Redução de 25% no tamanho */
-      width: 150px;           /* Antes: 200px */
-      padding: 9px 15px;      /* Antes: 12px 20px */
-      font-size: 12px;        /* Antes: 16px */
-      
-      /* Demais propriedades mantidas */
+      width: 220px; /* Largura fixa para garantir o mesmo tamanho */
+      padding: 12px 20px;
+      font-size: 16px;
       font-weight: bold;
-      border-radius: 8px;
-      border: 2px solid #007aff;
+      border-radius: 8px; /* Mantém o arredondamento original */
+      border: 2px solid #007aff; /* Borda padrão azul */
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.3s ease; /* Transição suave para todas as propriedades */
       text-align: center;
     }
 
@@ -53,15 +43,15 @@
 
     /* Estilo específico para o botão EXPORTAR (cores OPOSTAS) */
     #btnExportarCSV {
-      background-color: white;
-      color: #007aff;
+      background-color: white; /* Fundo branco */
+      color: #007aff; /* Texto azul */
     }
 
     #btnExportarCSV:hover {
-      background-color: #007aff;
+      background-color: #007aff; /* No hover, inverte as cores */
       color: white;
     }
-</style>
+  </style>
 
 </head>
 <body>
@@ -72,30 +62,21 @@
     <!-- Agrupamento de todos os combos e botões -->
     <div class="form-group" autocomplete="off">
       <div class="combo">
-        <label>Tipo de Projeto</label>
-        
-        <select id="TipoProjeto">
-          <option value="" disabled selected>Selecione uma opção...</option>
-          <option value="ANT">Anteprojeto</option>
-          <option value="FUN">Funcional</option>
-          <option value="CON">Conceitual</option>
-          <option value="PBA">Básico</option>
-          <option value="EXE">Executivo</option>
-          <option value="ASB">As Built</option>
-          <option value="EVT">Estudos de Viabilidade Técnica, Econômica e Financeira</option>
-          <option value="AMB">Ambiental</option>
-          <option value="SUP">Supervisão de Obras</option>
-          <option value="ATO">Apoio Técnico de Obras</option>
-          <option value="VID">Verificador Independente</option>
-          <option value="OUT">Outros</option>
+        <option value="" disabled selected>Selecione uma opção...</option>
+        <label>Código do Projeto</label>
+        <select id="CodigoProjeto">
+          <option value="25001">25001 - Duplicação BR-101/SE</option>
+          <option value="25002">25002 - Restauração BA-052</option>
+          <option value="25003">25003 - Ponte sobre o Rio Verde</option>
+          <option value="25004">25004 - Acesso ao Aeroporto</option>
+          <option value="25005">25005 - Travessia Urbana em Itabaiana</option>
+          <option value="25006">25006 - Contorno de Lagarto</option>
         </select>
       </div>
-
       <div class="combo">
         <label>Tipo de Obra</label>
-        
+        <option value="" disabled selected>Selecione uma opção...</option>
         <select id="TipoObra">
-          <option value="" disabled selected>Selecione uma opção...</option>
           <option value="ROD">Rodovia</option>
           <option value="MIN">Mineração</option>
           <option value="ACE">Acesso</option>
@@ -134,12 +115,60 @@
           <option value="PCR">Pontos Críticos</option>
         </select>
       </div>
+      <div class="combo">
+        <label>Tipo de Projeto</label>
+        <option value="" disabled selected>Selecione uma opção...</option>
+        <select id="TipoProjeto">
+          <option value="ANT">Anteprojeto</option>
+          <option value="FUN">Funcional</option>
+          <option value="CON">Conceitual</option>
+          <option value="PBA">Básico</option>
+          <option value="EXE">Executivo</option>
+          <option value="ASB">As Built</option>
+          <option value="EVT">Estudos de Viabilidade Técnica, Econômica e Financeira</option>
+          <option value="AMB">Ambiental</option>
+          <option value="SUP">Supervisão de Obras</option>
+          <option value="ATO">Apoio Técnico de Obras</option>
+          <option value="VID">Verificador Independente</option>
+          <option value="OUT">Outros</option>
+        </select>
+      </div>
+
+      <div class="combo">
+        <label>Tipo de Documento</label>
+        <option value="" disabled selected>Selecione uma opção...</option>
+        <select id="TipoDoc">
+          <option value="DE">Desenho</option>
+          <option value="BO">Boletins</option>
+          <option value="CR">Cronograma</option>
+          <option value="EM">Especificação de materiais e equipamentos</option>
+          <option value="ES">Especificação de Serviço</option>
+          <option value="ET">Especificação Técnica</option>
+          <option value="GR">Guia de remessa de documentos</option>
+          <option value="IA">Imagem de levantamento aéreo</option>
+          <option value="ID">Índice de documentos</option>
+          <option value="IP">Instrução de Projeto</option>
+          <option value="IT">Instrução de Trabalho</option>
+          <option value="LM">Lista de Material e Equipamentos</option>
+          <option value="MC">Memorial de Cálculo</option>
+          <option value="MD">Memorial Descritivo</option>
+          <option value="NS">Nota de Serviço</option>
+          <option value="PL">Planilha de serviços, quantidades e preços</option>
+          <option value="PP">Projeto Padrão</option>
+          <option value="RV">Relatório Audiovisual</option>
+          <option value="RA">Relatório de Análise Técnica</option>
+          <option value="RM">Relatório de Monitoração</option>
+          <option value="RC">Relatório de Visita de Campo</option>
+          <option value="RF">Relatório Fotográfico</option>
+          <option value="RT">Relatório Técnico</option>
+        </select>
+      </div>
 
       <div class="combo">
         <label>Disciplina</label>
-        
+        <option value="" disabled selected>Selecione uma opção...</option>
         <select id="Disciplina">
-          <option value="" disabled selected>Selecione uma opção...</option>
+        
           <option value="GM">Geometria</option>
           <option value="A0">Correspondência</option>
           <option value="Y1">Anotação de Responsabilidade Técnica</option>
@@ -203,50 +232,9 @@
         </select>
       </div>
 
-      <div class="combo">
-        <label>Tipo de Documento</label>
-        
-        <select id="TipoDoc">
-          <option value="" disabled selected>Selecione uma opção...</option>
-          <option value="DE">Desenho</option>
-          <option value="BO">Boletins</option>
-          <option value="CR">Cronograma</option>
-          <option value="EM">Especificação de materiais e equipamentos</option>
-          <option value="ES">Especificação de Serviço</option>
-          <option value="ET">Especificação Técnica</option>
-          <option value="GR">Guia de remessa de documentos</option>
-          <option value="IA">Imagem de levantamento aéreo</option>
-          <option value="ID">Índice de documentos</option>
-          <option value="IP">Instrução de Projeto</option>
-          <option value="IT">Instrução de Trabalho</option>
-          <option value="LM">Lista de Material e Equipamentos</option>
-          <option value="MC">Memorial de Cálculo</option>
-          <option value="MD">Memorial Descritivo</option>
-          <option value="NS">Nota de Serviço</option>
-          <option value="PL">Planilha de serviços, quantidades e preços</option>
-          <option value="PP">Projeto Padrão</option>
-          <option value="RV">Relatório Audiovisual</option>
-          <option value="RA">Relatório de Análise Técnica</option>
-          <option value="RM">Relatório de Monitoração</option>
-          <option value="RC">Relatório de Visita de Campo</option>
-          <option value="RF">Relatório Fotográfico</option>
-          <option value="RT">Relatório Técnico</option>
-        </select>
-      </div>
+      
 
-      <div class="combo">
-        <label>Código do Projeto</label>
-        
-        <select id="CodigoProjeto">
-          <option value="" disabled selected>Selecione uma opção...</option>
-          <option value="25001">25001 - Duplicação BR-101/SE</option>
-          <option value="25002">25002 - Restauração BA-052</option>
-          <option value="25003">25003 - Ponte sobre o Rio Verde</option>
-          <option value="25004">25004 - Acesso ao Aeroporto</option>
-          <option value="25005">25005 - Travessia Urbana em Itabaiana</option>
-          <option value="25006">25006 - Contorno de Lagarto</option>
-        </select>
-      </div>
+      
 
       <div class="combo">
         <label>Sequência</label>
