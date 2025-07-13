@@ -1,3 +1,16 @@
+Claro, sem problemas. É comum que algo se perca ao copiar e colar múltiplos blocos de código. Um pequeno erro de sintaxe ou a colocação de uma tag no lugar errado pode fazer a página parar de funcionar.
+
+Abaixo está o código completo e corrigido para o seu arquivo `index.html`. Ele inclui:
+
+  * Toda a estrutura original de combos e da tabela.
+  * Os botões "Gerar Código", "Limpar Filtros" e "Baixar CSV".
+  * O novo bloco de estilos `<style>` que adicionamos, inserido corretamente dentro da tag `<head>`.
+
+Copie e substitua **todo o conteúdo** do seu arquivo `index.html` por este código. Com a versão correta do `script.js` que enviei anteriormente, tudo deve voltar a funcionar perfeitamente, agora com o novo design.
+
+### Código Completo e Corrigido: `index.html`
+
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -5,58 +18,59 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Codificador Excel</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
   <style>
-  /*
-   * ===============================================
-   * ESTILOS PARA O BOTÃO DE BAIXAR CSV
-   * ===============================================
-   */
-  #btnExportarCSV {
-    background-color: #1a73e8; /* Um azul moderno e atraente */
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 8px; /* Cantos arredondados */
-    font-weight: 600;   /* Texto em negrito */
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease; /* Transições suaves */
-    margin-left: 10px; /* Adiciona um espaço à esquerda */
-  }
+    /*
+    * ===============================================
+    * ESTILOS PARA O BOTÃO DE BAIXAR CSV
+    * ===============================================
+    */
+    #btnExportarCSV {
+      background-color: #1a73e8; /* Um azul moderno e atraente */
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px; /* Cantos arredondados */
+      font-weight: 600;   /* Texto em negrito */
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.1s ease; /* Transições suaves */
+      margin-left: 10px; /* Adiciona um espaço à esquerda */
+    }
 
-  #btnExportarCSV:hover {
-    background-color: #155ab6; /* Cor mais escura ao passar o mouse */
-  }
+    #btnExportarCSV:hover {
+      background-color: #155ab6; /* Cor mais escura ao passar o mouse */
+    }
 
-  #btnExportarCSV:active {
-    transform: scale(0.98); /* Efeito de clique */
-  }
+    #btnExportarCSV:active {
+      transform: scale(0.98); /* Efeito de clique */
+    }
 
 
- 
-  #btnGerar {
-    width: auto; /* A largura será automática baseada no conteúdo e padding */
-    min-width: 150px; /* Define uma largura mínima para manter a aparência */
-    padding-left: 20px;
-    padding-right: 20px;
-  }
+    /*
+    * ===============================================
+    * AJUSTES NO BOTÃO GERAR CÓDIGO
+    * ===============================================
+    */
+    #btnGerar {
+      width: auto; /* A largura será automática baseada no conteúdo e padding */
+      min-width: 150px; /* Define uma largura mínima para manter a aparência */
+      padding-left: 20px;
+      padding-right: 20px;
+      /* Usa margens automáticas para centralizar */
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
 
-  #btnGerar {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  }
-</style>
 </head>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
 <body>
   <img src="moduluslogo.jpg" alt="Logo Modulus" class="logo-superior-central">
   <h2>Modulus Docs – Registro de Documentos</h2>
 
-  <!-- NOVA ESTRUTURA: agrupamento horizontal dos combos -->
   <div class="container">
-    <!-- Agrupamento de todos os combos e botões -->
     <div class="form-group">
       <div class="combo">
         <label>Tipo de Projeto</label>
@@ -239,15 +253,17 @@
         <button id="btnGerar">Gerar Código</button>
       </div>
 
-
-      
-      
+      <div class="combo" style="display:flex; flex-direction:column; justify-content:flex-end;">
+        <button id="btnLimparFiltros">Limpar Filtros</button>
+      </div>
     </div>
   </div>
+
 <div class="filtro-global">
-  
+    <input id="filtroGeral" type="text" placeholder="🔍 Buscar em todas as colunas">
     <button id="btnExportarCSV">⬇️ Baixar CSV</button>
   </div>
+
   <table id="tabela">
     <thead>
       <tr>
@@ -276,3 +292,4 @@
   <img src="moduluslogo.jpg" alt="Logo Modulus" class="logo-canto-inferior">
 </body>
 </html>
+```
