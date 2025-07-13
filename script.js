@@ -1,17 +1,17 @@
-// script.js - VERSÃO COM LIMPEZA FORÇADA PÓS-CARREGAMENTO
+// script.js - VERSÃO COM LIMPEZA FORÇADA DE TODOS OS CAMPOS (INCLUINDO COMBOS)
 
 /**
  * Função dedicada para limpar todos os campos de formulário e filtros.
  * Isso garante que a página sempre comece em um estado limpo.
  */
 function limparTodosOsCampos() {
-  // Limpa os campos de input do formulário principal
+  // Limpa os campos de input de texto do formulário principal
   const inputsDoFormulario = document.querySelectorAll('.form-group input[type="text"]');
   inputsDoFormulario.forEach(input => {
     input.value = '';
   });
 
-  // Reseta os campos de seleção (dropdowns) para a primeira opção
+  // Reseta os campos de seleção (dropdowns/combos) para a primeira opção
   const selectsDoFormulario = document.querySelectorAll('.form-group select');
   selectsDoFormulario.forEach(select => {
     select.selectedIndex = 0;
@@ -25,7 +25,7 @@ function limparTodosOsCampos() {
 }
 
 
-// O código principal da aplicação continua aqui, dentro do DOMContentLoaded.
+// O código principal da aplicação continua aqui.
 document.addEventListener('DOMContentLoaded', () => {
   // --- VARIÁVEIS GLOBAIS ---
   let todosOsRegistros = [];
@@ -36,8 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const exportarCSVBtn = document.getElementById('btnExportarCSV');
   const gerarBtn = document.getElementById('btnGerar');
   const filtrosDeColunaInputs = document.querySelectorAll('.filtros input');
-
-  // A lógica de limpeza foi movida para fora deste bloco para garantir que execute por último.
 
   // --- FUNÇÕES ---
 
@@ -101,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (exportarCSVBtn) {
     exportarCSVBtn.addEventListener('click', () => {
-      // Lógica de exportação CSV... (sem alterações)
       const csv = [];
       const cabecalho = Array.from(document.querySelectorAll('#tabela thead th')).map(th => th.innerText.trim()).slice(0, -1);
       csv.push(cabecalho.join(','));
@@ -131,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (gerarBtn) {
     gerarBtn.addEventListener('click', async () => {
-      // Lógica de gerar código e salvar... (sem alterações)
       const projeto = document.getElementById('CodigoProjeto').value;
       const tipoObra = document.getElementById('TipoObra').value;
       const tipoProjeto = document.getElementById('TipoProjeto').value;
@@ -167,9 +163,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 /**
- * Executa a limpeza DEPOIS que toda a página, incluindo imagens e scripts, foi carregada.
- * Esta é a abordagem mais robusta para garantir que os campos fiquem limpos,
- * vencendo o preenchimento automático do navegador.
+ * Executa a limpeza DEPOIS que toda a página foi carregada.
+ * Esta é a abordagem mais robusta contra o autocompletar do navegador.
  */
 window.onload = function() {
     limparTodosOsCampos();
