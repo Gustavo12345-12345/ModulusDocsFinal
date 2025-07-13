@@ -5,6 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Codificador Excel</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+  /*
+   * ===============================================
+   * ESTILOS PARA O BOTÃO DE BAIXAR CSV
+   * ===============================================
+   */
+  #btnExportarCSV {
+    background-color: #1a73e8; /* Um azul moderno e atraente */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px; /* Cantos arredondados */
+    font-weight: 600;   /* Texto em negrito */
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease; /* Transições suaves */
+    margin-left: 10px; /* Adiciona um espaço à esquerda */
+  }
+
+  #btnExportarCSV:hover {
+    background-color: #155ab6; /* Cor mais escura ao passar o mouse */
+  }
+
+  #btnExportarCSV:active {
+    transform: scale(0.98); /* Efeito de clique */
+  }
+
+
+ 
+  #btnGerar {
+    width: auto; /* A largura será automática baseada no conteúdo e padding */
+    min-width: 150px; /* Define uma largura mínima para manter a aparência */
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  #btnGerar {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+</style>
 </head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
