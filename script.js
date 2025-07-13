@@ -1,34 +1,8 @@
-// script.js - VERSÃO COM LIMPEZA FORÇADA DE TODOS OS CAMPOS (INCLUINDO COMBOS)
+// script.js - VERSÃO ESTÁVEL
 
-/**
- * Função dedicada para limpar todos os campos de formulário e filtros.
- * Isso garante que a página sempre comece em um estado limpo.
- */
-function limparTodosOsCampos() {
-  // Limpa os campos de input de texto do formulário principal
-  const inputsDoFormulario = document.querySelectorAll('.form-group input[type="text"]');
-  inputsDoFormulario.forEach(input => {
-    input.value = '';
-  });
-
-  // Reseta os campos de seleção (dropdowns/combos) para a primeira opção
-  const selectsDoFormulario = document.querySelectorAll('.form-group select');
-  selectsDoFormulario.forEach(select => {
-    select.selectedIndex = 0;
-  });
-
-  // Limpa também os campos de filtro da tabela
-  const inputsDeFiltro = document.querySelectorAll('.filtros input[type="text"]');
-  inputsDeFiltro.forEach(input => {
-    input.value = '';
-  });
-}
-
-
-// O código principal da aplicação continua aqui.
 document.addEventListener('DOMContentLoaded', () => {
   // --- VARIÁVEIS GLOBAIS ---
-  let todosOsRegistros = [];
+  let todosOsRegistros = []; 
 
   // --- SELETORES DE ELEMENTOS ---
   const tabelaRegistros = document.getElementById('tabela').getElementsByTagName('tbody')[0];
@@ -40,11 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- FUNÇÕES ---
 
   const renderizarTabela = (registros) => {
-    tabelaRegistros.innerHTML = '';
+    tabelaRegistros.innerHTML = ''; 
     registros.forEach(registro => {
       const row = tabelaRegistros.insertRow();
       const dataFormatada = registro.data ? new Date(registro.data).toLocaleDateString() : '';
-
+      
       row.innerHTML = `
         <td>${registro.projeto}</td>
         <td>${registro.tipoobra}</td>
@@ -84,11 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
       renderizarTabela(todosOsRegistros);
     } catch (error) {
       console.error("Falha ao carregar registros:", error);
-      tabelaRegistros.innerHTML = `<tr><td colspan="11">Erro ao carregar dados.</td></tr>`;
+      tabelaRegistros.innerHTML = `<tr><td colspan="11">Erro ao carregar dados. Verifique a conexão com o servidor.</td></tr>`;
     }
   };
 
-  // --- EVENT LISTENERS ---
+  // --- EVENT LISTENERS (Ouvintes de eventos) ---
 
   if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
@@ -96,14 +70,15 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = '/login.html';
     });
   }
-
+  
   if (exportarCSVBtn) {
     exportarCSVBtn.addEventListener('click', () => {
       const csv = [];
       const cabecalho = Array.from(document.querySelectorAll('#tabela thead th')).map(th => th.innerText.trim()).slice(0, -1);
       csv.push(cabecalho.join(','));
+
       const linhasDeDados = document.querySelectorAll('#tabela tbody tr');
-      linhasDeDados.forEach(linha => {
+       linhasDeDados.forEach(linha => {
         const row = [];
         linha.querySelectorAll('td').forEach((celula, index) => {
           if (index < linha.cells.length - 1) {
@@ -112,20 +87,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         csv.push(row.join(','));
       });
+
       if (linhasDeDados.length === 0) {
-        alert("Não há dados para exportar.");
+        alert("Não há dados filtrados para exportar.");
         return;
       }
+
       const blob = new Blob([csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'registros.csv';
+      a.download = 'registros_filtrados.csv';
       a.click();
       window.URL.revokeObjectURL(url);
     });
   }
-
+  
   if (gerarBtn) {
     gerarBtn.addEventListener('click', async () => {
       const projeto = document.getElementById('CodigoProjeto').value;
@@ -135,21 +112,27 @@ document.addEventListener('DOMContentLoaded', () => {
       const disciplina = document.getElementById('Disciplina').value;
       const sequencia = document.getElementById('Sequencia').value;
       const revisao = document.getElementById('Revisao').value;
+      
       if (!sequencia || !revisao) {
           alert('Por favor, preencha os campos Sequência e Revisão.');
           return;
       }
+      
       const sequenciaFormatada = sequencia.padStart(3, '0');
       const revisaoFormatada = revisao.toUpperCase();
       const codigoGerado = `${projeto}-${tipoObra}-${tipoProjeto}-${tipoDoc}-${disciplina}-${sequenciaFormatada}-${revisaoFormatada}`;
+      
       const dadosParaSalvar = {
         projeto, tipo_obra: tipoObra, tipo_projeto: tipoProjeto, tipo_doc: tipoDoc, disciplina, 
         sequencia: sequenciaFormatada, revisao: revisaoFormatada, codigo_arquivo: codigoGerado,
         data: new Date().toISOString().split('T')[0],
       };
+
       await fetch('/registro', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(dadosParaSalvar) });
+      
       document.getElementById('Sequencia').value = '';
       document.getElementById('Revisao').value = '';
+      
       alert(`Registro salvo com o código: ${codigoGerado}`);
       carregarRegistros();
     });
@@ -161,20 +144,10 @@ document.addEventListener('DOMContentLoaded', () => {
   carregarRegistros();
 });
 
-
-/**
- * Executa a limpeza DEPOIS que toda a página foi carregada.
- * Esta é a abordagem mais robusta contra o autocompletar do navegador.
- */
-window.onload = function() {
-    limparTodosOsCampos();
-};
-
-
 async function deletarRegistro(id) {
   if (!confirm('Tem certeza que deseja excluir este registro?')) {
     return;
   }
   await fetch(`/registro/${id}`, { method: 'DELETE' });
-  location.reload();
+  location.reload(); 
 }
