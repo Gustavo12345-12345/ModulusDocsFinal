@@ -65,3 +65,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
   carregarRegistros();
 });
+// Sistema de filtros por coluna (executado em cada input)
+document.querySelectorAll(".filtros input").forEach((input, index) => {
+  input.addEventListener("input", () => {
+    const filtro = input.value.toLowerCase();
+    const linhas = document.querySelectorAll("#tabela tbody tr");
+
+    linhas.forEach((linha) => {
+      const celula = linha.cells[index];
+      const conteudo = celula ? celula.textContent.toLowerCase() : "";
+      const visivel = conteudo.includes(filtro);
+
+      linha.style.display = visivel ? "" : "none";
+    });
+  });
+});
+
+// Função para exportar os dados filtrados da tabela para .xlsx
+document.getElementById("btnExportarFiltro").addEventListener("click", function () {
+  const XLSX = window.XLSX; // Requer XLSX (SheetJS) incluído no HTML
+  const tabela = document.getElementById("tabela");
+  const linhasVisiveis = Array.from(tabela.querySelectorAll("tbody tr")).filter(
+    (linha) => linha.style.display !== "none"
+  );
+
+  const dados = [];
+  const cabecalho = Array.from(tabela.querySelectorAll("thead tr")[0].cells).map((th) => th.textContent.trim());
+  dados.push(cabecalho.slice(0, -1)); // Remove "Ações"
+
+  linhasVisiveis.forEach((linha) => {
+    const linhaDados = Array.from(linha.cells).map((td) => td.textContent.trim());
+    dados.push(linhaDados.slice(0, -1)); // Remove "Ações"
+  });
+
+  const ws = XLSX.utils.aoa_to_sheet(dados);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Filtrados");
+  XLSX.writeFile(wb, "download.xlsx");
+});
+
