@@ -1,3 +1,106 @@
+
+document.addEventListener('DOMContentLoaded', () => {
+  const registroForm = document.getElementById('registroForm');
+  const tabelaRegistros = document.getElementById('tabelaRegistros').getElementsByTagName('tbody')[0];
+  const logoutBtn = document.getElementById('logoutBtn');
+  const exportarCSV = document.getElementById('exportarCSV');
+  const gerarBtn = document.getElementById('btnGerar');
+
+  const carregarRegistros = async () => {
+    const response = await fetch('/registros');
+    const dados = await response.json();
+
+    tabelaRegistros.innerHTML = '';
+
+    dados.forEach(registro => {
+      const row = tabelaRegistros.insertRow();
+
+      row.innerHTML = `
+        <td>${registro.projeto}</td>
+        <td>${registro.tipo_obra}</td>
+        <td>${registro.tipo_projeto}</td>
+        <td>${registro.tipo_doc}</td>
+        <td>${registro.disciplina}</td>
+        <td>${registro.sequencia}</td>
+        <td>${registro.revisao}</td>
+        <td>${registro.codigo_arquivo}</td>
+        <td>${new Date(registro.data).toLocaleDateString()}</td>
+        <td>${registro.autor}</td>
+        <td><button onclick="deletarRegistro(${registro.id})">Excluir</button></td>
+      `;
+    });
+  };
+
+  registroForm.addEventListener('submit', async e => {
+    e.preventDefault();
+
+    const dados = {
+      projeto: registroForm.Projeto.value,
+      tipo_obra: registroForm.TipoObra.value,
+      tipo_projeto: registroForm.TipoProjeto.value,
+      tipo_doc: registroForm.TipoDoc.value,
+      disciplina: registroForm.Disciplina.value,
+      sequencia: registroForm.Sequencia.value,
+      revisao: registroForm.Revisao.value,
+      codigo_arquivo: registroForm.CodigoArquivo.value,
+      data: registroForm.Data.value,
+    };
+
+    await fetch('/registro', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(dados),
+    });
+
+    registroForm.reset();
+    carregarRegistros();
+  });
+
+  logoutBtn.addEventListener('click', async () => {
+    await fetch('/logout');
+    window.location.href = '/login';
+  });
+
+  exportarCSV.addEventListener('click', () => {
+    const csv = [];
+    const linhas = document.querySelectorAll('table tr');
+    linhas.forEach(linha => {
+      const row = [];
+      linha.querySelectorAll('th, td').forEach(celula => {
+        row.push(celula.innerText);
+      });
+      csv.push(row.join(','));
+    });
+
+    const blob = new Blob([csv.join('\n')], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'registros.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
+  });
+
+  gerarBtn.addEventListener('click', () => {
+    const projeto = registroForm.Projeto.value;
+    const tipoObra = registroForm.TipoObra.value;
+    const tipoProjeto = registroForm.TipoProjeto.value;
+    const tipoDoc = registroForm.TipoDoc.value;
+    const disciplina = registroForm.Disciplina.value;
+    const sequencia = registroForm.Sequencia.value.padStart(3, '0');
+    const revisao = registroForm.Revisao.value.toUpperCase();
+
+    const codigo = `${projeto}-${tipoObra}-${tipoProjeto}-${tipoDoc}-${disciplina}-${sequencia}-${revisao}`;
+    registroForm.CodigoArquivo.value = codigo;
+  });
+
+  carregarRegistros();
+});
+
+async function deletarRegistro(id) {
+  await fetch(`/registro/${id}`, { method: 'DELETE' });
+  location.reload();
+}
 document.addEventListener('DOMContentLoaded', () => {
   const filtroGeralInput = document.getElementById('filtroGeral');
   const btnExportarCSV = document.getElementById('btnExportarCSV');
