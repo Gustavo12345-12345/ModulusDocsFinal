@@ -16,51 +16,52 @@
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-  <style>
-    /* Novo container para alinhar os botões na mesma linha */
-    .botoes-acao-container {
-      display: flex;
-      justify-content: center; /* Centraliza os botões na página */
-      align-items: center;
-      gap: 20px; /* Espaço entre os botões */
-      margin: 25px 0; /* Espaço vertical acima e abaixo dos botões */
-    }
+<style>
+  /* Novo container para alinhar os botões na mesma linha */
+  .botoes-acao-container {
+    width: 100%; /* <<-- ESTA É A CORREÇÃO PARA GARANTIR A CENTRALIZAÇÃO */
+    display: flex;
+    justify-content: center; /* Centraliza os botões na página */
+    align-items: center;
+    gap: 20px; /* Espaço entre os botões */
+    margin: 25px 0; /* Espaço vertical acima e abaixo dos botões */
+  }
 
-    /* Estilo BASE para AMBOS os botões (garante o mesmo tamanho e formato) */
-    #btnGerar, #btnExportarCSV {
-      width: 200px; /* Tamanho final, um pouco menor */
-      padding: 12px 20px;
-      font-size: 12px;        /* Antes: 16px */
-      font-weight: bold;
-      border-radius: 8px;
-      border: 2px solid #007aff; /* Borda padrão azul */
-      cursor: pointer;
-      transition: all 0.3s ease; /* Transição suave para todas as propriedades */
-      text-align: center;
-    }
+  /* Estilo BASE para AMBOS os botões (garante o mesmo tamanho e formato) */
+  #btnGerar, #btnExportarCSV {
+    width: 200px;
+    padding: 12px 20px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 8px;
+    border: 2px solid #007aff; /* Borda padrão azul */
+    cursor: pointer;
+    transition: all 0.3s ease; /* Transição suave para todas as propriedades */
+    text-align: center;
+  }
 
-    /* Estilo específico para o botão GERAR (fundo azul, texto branco) */
-    #btnGerar {
-      background-color: #007aff;
-      color: white;
-    }
+  /* Estilo específico para o botão GERAR (fundo azul, texto branco) */
+  #btnGerar {
+    background-color: #007aff;
+    color: white;
+  }
 
-    #btnGerar:hover {
-      background-color: #005fcc;
-      border-color: #005fcc;
-    }
+  #btnGerar:hover {
+    background-color: #005fcc;
+    border-color: #005fcc;
+  }
 
-    /* Estilo específico para o botão EXPORTAR (cores OPOSTAS) */
-    #btnExportarCSV {
-      background-color: white; /* Fundo branco */
-      color: #007aff; /* Texto azul */
-    }
+  /* Estilo específico para o botão EXPORTAR (cores OPOSTAS) */
+  #btnExportarCSV {
+    background-color: white; /* Fundo branco */
+    color: #007aff; /* Texto azul */
+  }
 
-    #btnExportarCSV:hover {
-      background-color: #007aff; /* No hover, inverte as cores */
-      color: white;
-    }
-  </style>
+  #btnExportarCSV:hover {
+    background-color: #007aff; /* No hover, inverte as cores */
+    color: white;
+  }
+</style>
 
 </head>
 <body>
