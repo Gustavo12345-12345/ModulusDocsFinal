@@ -10,7 +10,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const exportarCSVBtn = document.getElementById('btnExportarCSV');
   const gerarBtn = document.getElementById('btnGerar');
   const filtrosDeColunaInputs = document.querySelectorAll('.filtros input');
+  // Limpa os campos de input ao carregar a página (simulando login)
+  const inputCampos = document.querySelectorAll('.form-group input');
+  inputCampos.forEach(input => {
+    input.value = '';
+  });
 
+  // Se você também quiser limpar os campos de select (dropdowns), pode usar este código:
+  const selectCampos = document.querySelectorAll('.form-group select');
+  selectCampos.forEach(select => {
+    select.selectedIndex = 0; // Define a primeira opção como selecionada
+  });
   // --- FUNÇÕES ---
 
   /**
