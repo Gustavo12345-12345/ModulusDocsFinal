@@ -5,61 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Codificador Excel</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
   <style>
-   
     .filtro-global {
       text-align: center;
-      margin-top: 20px;
       margin-bottom: 20px;
     }
-
-   
+    
     #btnExportarCSV {
-  background-color: #1a73e8;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 15px; /* Aumentamos o arredondamento */
-  font-weight: 600;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-left: 10px;
-}
-
-    #btnExportarCSV:hover {
-      background-color: #155ab6; /* Azul mais escuro ao passar o mouse */
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
     }
 
-    
-    #btnGerar {
-  display: block;
-  width: auto;
-  min-width: 180px;
-  padding: 12px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  margin-top: 10px;
-  margin-left: auto;
-  margin-right: auto;
-  background-color: #007aff;
-  color: white;
-  border: none;
-  border-radius: 15px; /* Aumentamos o arredondamento */
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-    
-  </style>
-</head>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    #btnExportarCSV:hover {
+      background-color: #155ab6;
+    }
 
+    #btnGerar {
+      display: block;
+      width: auto;
+      min-width: 150px;
+      padding: 10px 20px;
+      margin-left: auto;
+      margin-right: auto;
+      /* Estilos visuais para consistência */
+      background-color: #007aff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    
+    #btnGerar:hover {
+        background-color: #005fcc;
+    }
+  </style>
+
+</head>
 <body>
   <img src="moduluslogo.jpg" alt="Logo Modulus" class="logo-superior-central">
   <h2>Modulus Docs – Registro de Documentos</h2>
 
-  <!-- NOVA ESTRUTURA: agrupamento horizontal dos combos -->
-  <div class="container">
+<div class="container">
     <!-- Agrupamento de todos os combos e botões -->
     <div class="form-group" autocomplete="off">
       <div class="combo">
@@ -238,11 +235,15 @@
         <label>Revisão</label>
         <input type="text" id="Revisao" placeholder="Ex: 00, 01, A">
       </div>
-      <div class="botoes-acao-container">
-  <button id="btnGerar">Gerar Código</button>
-  <button id="btnExportarCSV">Baixar CSV</button>
-</div>
-      
+      <div class="combo">
+        <button id="btnGerar">Gerar Código</button>
+      </div>
+  <div class="filtro-global">
+    <button id="btnExportarCSV">⬇️ Baixar CSV</button>
+    
+  </div>
+
+  <table id="tabela">
     <thead>
       <tr>
         <th>Projeto</th><th>TipoObra</th><th>TipoProjeto</th><th>TipoDoc</th>
