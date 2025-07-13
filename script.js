@@ -102,5 +102,24 @@ document.getElementById("btnExportarFiltro").addEventListener("click", function 
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Filtrados");
   XLSX.writeFile(wb, "download.xlsx");
+  document.getElementById('btnGerar').addEventListener('click', function () {
+  const projeto = document.getElementById('CodigoProjeto').value;
+  const tipoProjeto = document.getElementById('TipoProjeto').value;
+  const tipoObra = document.getElementById('TipoObra').value;
+  const disciplina = document.getElementById('Disciplina').value;
+  const tipoDoc = document.getElementById('TipoDoc').value;
+  const sequencia = document.getElementById('Sequencia').value.padStart(3, '0');
+  const revisao = document.getElementById('Revisao').value.toUpperCase().padStart(2, '0');
+
+  // validação básica
+  if (!projeto || !tipoProjeto || !tipoObra || !disciplina || !tipoDoc || !sequencia || !revisao) {
+    alert("Preencha todos os campos obrigatórios para gerar o código.");
+    return;
+  }
+
+  const codigo = `${projeto}-${tipoProjeto}-${tipoObra}-${disciplina}-${tipoDoc}-${sequencia}-${revisao}`;
+  document.getElementById('CodigoArquivo').value = codigo;
+});
+
 });
 
