@@ -1,16 +1,15 @@
-// script.js - VERSÃO COM FILTRAGEM COMPLETA E DOWNLOAD DE FILTRADOS
+// script.js - VERSÃO CORRIGIDA (sem referências aos elementos removidos)
 
 document.addEventListener('DOMContentLoaded', () => {
   // --- VARIÁVEIS GLOBAIS ---
-  let todosOsRegistros = []; // Guarda todos os dados do servidor para evitar novas buscas.
+  let todosOsRegistros = []; 
 
   // --- SELETORES DE ELEMENTOS ---
-  const tabelaRegistros = document.getElementById('tabela').getElementsByTagName('tbody')[0]; //
+  const tabelaRegistros = document.getElementById('tabela').getElementsByTagName('tbody')[0];
   const logoutBtn = document.getElementById('logoutBtn');
-  const exportarCSVBtn = document.getElementById('btnExportarCSV'); //
-  const gerarBtn = document.getElementById('btnGerar'); //
-  const filtroGeralInput = document.getElementById('filtroGeral'); //
-  const filtrosDeColunaInputs = document.querySelectorAll('.filtros input'); //
+  const exportarCSVBtn = document.getElementById('btnExportarCSV');
+  const gerarBtn = document.getElementById('btnGerar');
+  const filtrosDeColunaInputs = document.querySelectorAll('.filtros input');
 
   // --- FUNÇÕES ---
 
@@ -19,10 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
    * @param {Array} registros - Um array de objetos de registro para exibir.
    */
   const renderizarTabela = (registros) => {
-    tabelaRegistros.innerHTML = ''; // Limpa a tabela atual
+    tabelaRegistros.innerHTML = ''; 
     registros.forEach(registro => {
       const row = tabelaRegistros.insertRow();
-      // Converte a data para o formato local dd/mm/yyyy
       const dataFormatada = registro.data ? new Date(registro.data).toLocaleDateString() : '';
       
       row.innerHTML = `
@@ -42,30 +40,20 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   /**
-   * Função principal que aplica todos os filtros sobre a lista completa de registros.
+   * Função que aplica os filtros de cada coluna.
+   * A lógica do filtro geral foi removida, pois o campo não existe mais.
    */
   const aplicarFiltros = () => {
-    const termoFiltroGeral = filtroGeralInput.value.toLowerCase();
     const valoresFiltrosColuna = Array.from(filtrosDeColunaInputs).map(input => input.value.toLowerCase());
-    
-    // Mapeia a ordem das colunas no HTML para os nomes das propriedades no objeto JS
     const mapaColunas = ['projeto', 'tipoobra', 'tipoprojeto', 'tipodoc', 'disciplina', 'sequencia', 'revisao', 'codigoarquivo', 'data', 'autor'];
 
     const registrosFiltrados = todosOsRegistros.filter(registro => {
-      // 1. Verifica o filtro GERAL
-      const atendeFiltroGeral = !termoFiltroGeral || Object.values(registro).some(valor =>
-        String(valor).toLowerCase().includes(termoFiltroGeral)
-      );
-
-      // 2. Verifica os filtros de cada COLUNA
-      const atendeFiltrosDeColuna = valoresFiltrosColuna.every((filtro, index) => {
-        if (!filtro) return true; // Se não há filtro para esta coluna, passa.
+      return valoresFiltrosColuna.every((filtro, index) => {
+        if (!filtro) return true;
         const nomeDaColuna = mapaColunas[index];
         const valorDaColuna = String(registro[nomeDaColuna]).toLowerCase();
         return valorDaColuna.includes(filtro);
       });
-      
-      return atendeFiltroGeral && atendeFiltrosDeColuna;
     });
 
     renderizarTabela(registrosFiltrados);
@@ -77,8 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const carregarRegistros = async () => {
     try {
       const response = await fetch('/registros');
-      todosOsRegistros = await response.json(); // Armazena na variável global
-      renderizarTabela(todosOsRegistros); // Desenha a tabela inicial
+      todosOsRegistros = await response.json();
+      renderizarTabela(todosOsRegistros);
     } catch (error) {
       console.error("Falha ao carregar registros:", error);
       tabelaRegistros.innerHTML = `<tr><td colspan="11">Erro ao carregar dados. Verifique a conexão com o servidor.</td></tr>`;
@@ -90,26 +78,21 @@ document.addEventListener('DOMContentLoaded', () => {
   if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
       await fetch('/logout');
-      window.location.href = '/login.html'; //
+      window.location.href = '/login.html';
     });
   }
-
-  // A função de exportar CSV funcionará automaticamente com os dados filtrados,
-  // pois ela lê diretamente da tabela que é redesenhada pela função `renderizarTabela`.
+  
   if (exportarCSVBtn) {
     exportarCSVBtn.addEventListener('click', () => {
       const csv = [];
-      const linhas = document.querySelectorAll('#tabela tr'); //
-      // Adiciona o cabeçalho
-      const cabecalho = Array.from(linhas[0].querySelectorAll('th')).map(th => th.innerText.trim()).slice(0, -1);
+      const cabecalho = Array.from(document.querySelectorAll('#tabela thead th')).map(th => th.innerText.trim()).slice(0, -1);
       csv.push(cabecalho.join(','));
 
-      // Adiciona as linhas de dados (tbody)
       const linhasDeDados = document.querySelectorAll('#tabela tbody tr');
        linhasDeDados.forEach(linha => {
         const row = [];
         linha.querySelectorAll('td').forEach((celula, index) => {
-          if (index < linha.cells.length - 1) { // Ignora a última célula (Ações)
+          if (index < linha.cells.length - 1) {
             row.push(`"${celula.innerText}"`);
           }
         });
@@ -133,13 +116,13 @@ document.addEventListener('DOMContentLoaded', () => {
   
   if (gerarBtn) {
     gerarBtn.addEventListener('click', async () => {
-      const projeto = document.getElementById('CodigoProjeto').value; //
-      const tipoObra = document.getElementById('TipoObra').value; //
-      const tipoProjeto = document.getElementById('TipoProjeto').value; //
-      const tipoDoc = document.getElementById('TipoDoc').value; //
-      const disciplina = document.getElementById('Disciplina').value; //
-      const sequencia = document.getElementById('Sequencia').value; //
-      const revisao = document.getElementById('Revisao').value; //
+      const projeto = document.getElementById('CodigoProjeto').value;
+      const tipoObra = document.getElementById('TipoObra').value;
+      const tipoProjeto = document.getElementById('TipoProjeto').value;
+      const tipoDoc = document.getElementById('TipoDoc').value;
+      const disciplina = document.getElementById('Disciplina').value;
+      const sequencia = document.getElementById('Sequencia').value;
+      const revisao = document.getElementById('Revisao').value;
       
       if (!sequencia || !revisao) {
           alert('Por favor, preencha os campos Sequência e Revisão.');
@@ -156,18 +139,17 @@ document.addEventListener('DOMContentLoaded', () => {
         data: new Date().toISOString().split('T')[0],
       };
 
-      await fetch('/registro', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(dadosParaSalvar) }); //
+      await fetch('/registro', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(dadosParaSalvar) });
       
       document.getElementById('Sequencia').value = '';
       document.getElementById('Revisao').value = '';
       
       alert(`Registro salvo com o código: ${codigoGerado}`);
-      carregarRegistros(); // Recarrega TODOS os dados do servidor para incluir o novo e redesenha a tabela.
+      carregarRegistros();
     });
   }
 
-  // Adiciona os listeners para os campos de filtro
-  filtroGeralInput.addEventListener('input', aplicarFiltros);
+  // Adiciona os listeners APENAS para os filtros de coluna, que ainda existem.
   filtrosDeColunaInputs.forEach(input => input.addEventListener('input', aplicarFiltros));
 
   // --- CHAMADA INICIAL ---
@@ -178,7 +160,7 @@ async function deletarRegistro(id) {
   if (!confirm('Tem certeza que deseja excluir este registro?')) {
     return;
   }
-  await fetch(`/registro/${id}`, { method: 'DELETE' }); //
+  await fetch(`/registro/${id}`, { method: 'DELETE' });
   // Recarrega os dados do servidor e atualiza a tabela
-  document.dispatchEvent(new Event('DOMContentLoaded')); 
+  location.reload(); // Recarregar a página é a forma mais simples de atualizar tudo.
 }
