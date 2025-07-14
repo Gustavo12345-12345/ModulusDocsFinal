@@ -76,23 +76,6 @@ h2 {
   font-weight: 500;
 }
 
-/* Botões lado a lado com estilo profissional */
-.combo button {
-  padding: 10px 14px;
-  font-size: 14px;
-  border: none;
-  border-radius: 6px;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-  margin-top: auto;
-  transition: background-color 0.2s;
-}
-
-.combo button:hover {
-  background-color: #0056b3;
-}
-
 /* Tabela */
 table {
   width: 100%;
@@ -132,4 +115,58 @@ thead input {
   .container {
     flex-direction: column;
   }
+}
+
+/* ================================================ */
+/* NOVOS ESTILOS PARA OS BOTÕES DE AÇÃO             */
+/* ================================================ */
+
+/* 1. Container que centraliza os botões */
+.botoes-acao-container {
+  width: 100%;
+  display: flex;
+  justify-content: center; /* Centraliza os botões */
+  align-items: center;
+  gap: 20px; /* Espaço entre os botões */
+  margin: 30px 0; /* Espaçamento vertical */
+}
+
+/* 2. Estilo base para ambos os botões (tamanho, arredondamento) */
+#btnGerar, #btnExportarCSV {
+  width: 220px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 50px; /* Arredondamento máximo (formato de pílula) */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+/* 3. Estilo do botão "Gerar Código" (Principal) */
+#btnGerar {
+  background-color: #007bff;
+  color: white;
+  border: 2px solid #007bff;
+}
+
+#btnGerar:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+  transform: translateY(-2px); /* Efeito de "saltar" */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* 4. Estilo do botão "Baixar CSV" (Cores Opostas) */
+#btnExportarCSV {
+  background-color: white;
+  color: #007bff;
+  border: 2px solid #007bff;
+}
+
+#btnExportarCSV:hover {
+  background-color: #007bff;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
