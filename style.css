@@ -1,239 +1,135 @@
-/* ==========================================================================
-   Modern & Dynamic Web App Theme
-   ========================================================================== */
-
-/* --------------------------------------------------------------------------
-   1. Variáveis Globais (Tema Principal)
-   -------------------------------------------------------------------------- */
-:root {
-  --primary-color: #0d6efd;
-  --primary-color-dark: #0b5ed7;
-  --gradient-start: #0d6efd;
-  --gradient-end: #0747a6;
-  --background-color: #ffffff;
-  --card-bg-color: #ffffff;
-  --text-primary: #212529;
-  --text-secondary: #6c757d;
-  --border-color: #dee2e6;
-  --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-  --button-shadow: 0 4px 15px 0 rgba(0, 110, 253, 0.25);
-  --pill-radius: 50px;
-  --main-transition: all 0.25s ease-in-out;
-}
-
-/* --------------------------------------------------------------------------
-   2. Estilos Base e Reset
-   -------------------------------------------------------------------------- */
-* {
-  box-sizing: border-box;
-}
-
+/* Layout geral */
 body {
-  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-  background-color: var(--background-color);
-  color: var(--text-primary);
-  margin: 0;
-  padding: 20px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* --------------------------------------------------------------------------
-   3. Layout e Containers
-   -------------------------------------------------------------------------- */
-.logo-superior-central {
-  display: block;
-  margin: 20px auto 40px auto;
-  width: 320px; /* LOGO MAIOR */
+  font-family: 'Segoe UI', sans-serif;
+  margin: 20px;
+  background-color: #f5f7fa;
+  color: #333;
 }
 
 h2 {
   text-align: center;
-  color: var(--text-primary);
-  font-weight: 700;
-  font-size: 32px;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
 
+/* Logo superior central */
+.logo-superior-central {
+  display: block;
+  margin: 20px auto 10px;
+  max-height: 60px;
+}
+
+/* Logo inferior */
+.logo-canto-inferior {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  max-height: 40px;
+}
+
+/* Container para os combos e botões */
 .container {
-  max-width: 1400px;
-  margin: 0 auto 30px auto;
-  padding: 40px;
-  background-color: var(--card-bg-color);
-  border-radius: 20px;
-  box-shadow: var(--card-shadow);
-  border: 1px solid #f0f0f0;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 20px;
+  margin-bottom: 30px;
 }
 
+/* Grupo de filtros (combos e botões) */
 .form-group {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  width: 100%;
 }
 
+/* Cada combo ou botão */
 .combo {
   display: flex;
   flex-direction: column;
+  min-width: 180px;
+  flex: 1 1 180px;
 }
 
-/* --------------------------------------------------------------------------
-   4. Elementos de Formulário (Inputs, Selects)
-   -------------------------------------------------------------------------- */
-label {
-  margin-bottom: 8px;
-  font-weight: 600;
+/* Estilo padrão para inputs e selects */
+.combo select,
+.combo input {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
   font-size: 14px;
-  color: var(--text-secondary);
-}
-
-select,
-.form-group input[type="text"] {
-  width: 100%;
-  padding: 14px 18px;
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  font-size: 16px;
-  transition: var(--main-transition);
-  background-color: #f8f9fa;
-  appearance: none;
-  -webkit-appearance: none;
-}
-
-select {
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%208l5%205%205-5z%22%20fill%3D%22%236c757d%22%2F%3E%3C%2Fsvg%3E');
-    background-repeat: no-repeat;
-    background-position: right 18px center;
-    background-size: 20px;
-}
-
-select:focus,
-.form-group input[type="text"]:focus,
-.filtros input[type="text"]:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15);
   background-color: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s;
 }
 
-/* --------------------------------------------------------------------------
-   5. Botões de Ação
-   -------------------------------------------------------------------------- */
-.botoes-acao-container {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 25px;
-  margin: 40px 0;
+.combo select:focus,
+.combo input:focus {
+  outline: none;
+  border-color: #007bff;
 }
 
-#btnGerar, #btnExportarCSV {
-  /* BOTÕES MAIORES E ARREDONDADOS */
-  width: 260px;
-  padding: 16px 25px;
-  font-size: 16px;
-  font-weight: 700;
-  border-radius: var(--pill-radius); /* BORDAS BEM REDONDAS */
-  cursor: pointer;
-  transition: var(--main-transition);
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+/* Estilo para labels */
+.combo label {
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+/* Botões lado a lado com estilo profissional */
+.combo button {
+  padding: 10px 14px;
+  font-size: 14px;
   border: none;
-  box-shadow: var(--button-shadow);
-}
-
-#btnGerar:hover, #btnExportarCSV:hover {
-  transform: translateY(-3px); /* EFEITO DE "SALTAR" */
-  box-shadow: 0 7px 20px 0 rgba(0, 110, 253, 0.3);
-}
-
-#btnGerar:active, #btnExportarCSV:active {
-  transform: translateY(0);
-  box-shadow: var(--button-shadow);
-}
-
-/* GRADIENTE NO BOTÃO PRINCIPAL */
-#btnGerar {
-  background-image: linear-gradient(45deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+  border-radius: 6px;
+  background-color: #007bff;
   color: white;
+  cursor: pointer;
+  margin-top: auto;
+  transition: background-color 0.2s;
 }
 
-/* CORES OPOSTAS NO BOTÃO SECUNDÁRIO */
-#btnExportarCSV {
-  background: white;
-  color: var(--primary-color);
-  border: 2px solid var(--primary-color-dark);
-  box-shadow: none; /* Sem sombra inicial para o botão secundário */
+.combo button:hover {
+  background-color: #0056b3;
 }
 
-#btnExportarCSV:hover {
-  background: var(--primary-color-dark);
-  color: white;
-  box-shadow: 0 7px 20px 0 rgba(0, 110, 253, 0.3);
-}
-
-/* --------------------------------------------------------------------------
-   6. Tabela de Dados
-   -------------------------------------------------------------------------- */
-.table-container {
-    width: 100%;
-    overflow-x: auto;
-    border-radius: 16px;
-    box-shadow: var(--card-shadow);
-    background-color: var(--card-bg-color);
-    padding: 10px;
-}
-
+/* Tabela */
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 1200px;
+  margin-top: 10px;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-th, td {
-  padding: 16px 20px;
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 10px;
   text-align: left;
-  border-bottom: 1px solid var(--border-color);
-  white-space: nowrap;
-}
-
-thead th {
-  font-weight: 700;
   font-size: 14px;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-  background-color: #f8f9fa;
-  position: sticky;
-  top: 0;
 }
 
-tbody tr:last-child td {
-    border-bottom: none;
+thead tr:first-child {
+  background-color: #007bff;
+  color: white;
 }
 
-tbody tr:hover {
-    background-color: #eef5ff;
+thead input {
+  width: 100%;
+  padding: 6px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  border: 1px solid #ccc;
 }
 
-.filtros input[type="text"] {
-    padding: 8px 12px;
-    border-radius: 6px;
-}
-
-/* --------------------------------------------------------------------------
-   7. Design Responsivo
-   -------------------------------------------------------------------------- */
+/* Responsividade */
 @media (max-width: 768px) {
-    .form-group {
-        grid-template-columns: 1fr;
-    }
+  .combo {
+    flex: 1 1 100%;
+  }
 
-    .botoes-acao-container {
-        flex-direction: column;
-    }
-
-    #btnGerar, #btnExportarCSV {
-        width: 100%;
-    }
+  .container {
+    flex-direction: column;
+  }
 }
